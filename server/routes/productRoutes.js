@@ -5,6 +5,7 @@ import {
   createProduct,
   updateProductStock,
   deleteProduct,
+  importProducts,
 } from "../controllers/productController.js";
 
 const router = express.Router();
@@ -12,6 +13,8 @@ const router = express.Router();
 router.get("/", getProducts);
 
 router.post("/", createProduct);
+
+router.post("/import", importProducts);
 
 router.patch("/:id/stock", updateProductStock);
 
