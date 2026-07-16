@@ -51,3 +51,17 @@ export async function deleteProduct(
     `/api/products/${id}`
   );
 }
+
+// ----------------------------------
+// Import Products
+// ----------------------------------
+
+export async function importProducts(
+  formData
+) {
+  return await post(
+    "/api/products/import",
+    formData,
+    true
+  );
+}

@@ -8,60 +8,75 @@ import activityRoutes from "./routes/activityRoutes.js";
 import salesRoutes from "./routes/salesRoutes.js";
 import dashboardRoutes from "./routes/dashboardRoutes.js";
 import commandRoutes from "./routes/commandRoutes.js";
-import importRoutes from "./routes/importRoutes.js";
 
 dotenv.config();
 
 const app = express();
 
+// ==========================================
+// Middleware
+// ==========================================
+
 app.use(cors());
 app.use(express.json());
 
+// ==========================================
+// Health Check
+// ==========================================
+
 app.get("/", (req, res) => {
-  res.send("Inventory API Running...");
+  res.send("🚀 InventorySys API Running...");
 });
 
 // ==========================================
-// Product Routes
+// API Routes
 // ==========================================
 
+// Products
 app.use("/api/products", productRoutes);
 
-// ==========================================
-// Import Routes
-// ==========================================
-
-app.use("/api/import", importRoutes);
-
-// ==========================================
-// AI Routes
-// ==========================================
-
+// AI
 app.use("/api/ai", aiRoutes);
 
-// ==========================================
-// Activity Routes
-// ==========================================
-
+// Activity
 app.use("/api/activity", activityRoutes);
 
-// ==========================================
-// Sales Routes
-// ==========================================
-
+// Sales
 app.use("/api/sales", salesRoutes);
 
-// ==========================================
-// Dashboard Routes
-// ==========================================
-
+// Dashboard
 app.use("/api/dashboard", dashboardRoutes);
 
-// ==========================================
 // Business Command Center
+app.use("/api/command", commandRoutes);
+
+// ==========================================
+// 404 Handler
 // ==========================================
 
-app.use("/api/command", commandRoutes);
+app.use((req, res) => {
+  res.status(404).json({
+    success: false,
+    message: "Route not found.",
+  });
+});
+
+// ==========================================
+// Global Error Handler
+// ==========================================
+
+app.use((err, req, res, next) => {
+  console.error(err);
+
+  res.status(500).json({
+    success: false,
+    message: "Internal Server Error",
+  });
+});
+
+// ==========================================
+// Start Server
+// ==========================================
 
 const PORT = process.env.PORT || 5000;
 

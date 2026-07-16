@@ -1,4 +1,5 @@
 import express from "express";
+import multer from "multer";
 
 import {
   getProducts,
@@ -10,11 +11,19 @@ import {
 
 const router = express.Router();
 
+const upload = multer({
+  dest: "uploads/",
+});
+
 router.get("/", getProducts);
 
 router.post("/", createProduct);
 
-router.post("/import", importProducts);
+router.post(
+  "/import",
+  upload.single("file"),
+  importProducts
+);
 
 router.patch("/:id/stock", updateProductStock);
 

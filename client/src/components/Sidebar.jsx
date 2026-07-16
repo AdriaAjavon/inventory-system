@@ -8,6 +8,7 @@ import {
   FaHistory,
   FaCashRegister,
   FaReceipt,
+  FaFileImport,
 } from "react-icons/fa";
 
 function Sidebar() {
@@ -24,6 +25,12 @@ function Sidebar() {
       name: "Products",
       path: "/products",
       icon: <FaBox />,
+    },
+
+    {
+      name: "Import Products",
+      path: "/import-products",
+      icon: <FaFileImport />,
     },
 
     {
@@ -59,12 +66,15 @@ function Sidebar() {
 
   return (
     <div className="w-64 h-screen bg-slate-950 border-r border-slate-800 p-5">
+
       <h1 className="text-3xl font-bold mb-12 text-cyan-400">
         InventorySys
       </h1>
 
       <nav className="flex flex-col gap-3">
+
         {links.map((link) => (
+
           <Link
             key={link.name}
             to={link.path}
@@ -74,11 +84,17 @@ function Sidebar() {
                 : "hover:bg-slate-800"
             }`}
           >
+
             {link.icon}
-            {link.name}
+
+            <span>{link.name}</span>
+
           </Link>
+
         ))}
+
       </nav>
+
     </div>
   );
 }

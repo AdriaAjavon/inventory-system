@@ -13,14 +13,7 @@ export async function apiRequest(
   try {
     const response = await fetch(
       `${API_URL}${endpoint}`,
-      {
-        headers: {
-          "Content-Type":
-            "application/json",
-          ...(options.headers || {}),
-        },
-        ...options,
-      }
+      options
     );
 
     const data =
@@ -34,13 +27,16 @@ export async function apiRequest(
     }
 
     return data;
+
   } catch (error) {
+
     console.error(
       "API Error:",
       error
     );
 
     throw error;
+
   }
 }
 
@@ -58,11 +54,22 @@ export function get(endpoint) {
 
 export function post(
   endpoint,
-  body
+  body,
+  isFormData = false
 ) {
   return apiRequest(endpoint, {
     method: "POST",
-    body: JSON.stringify(body),
+
+    headers: isFormData
+      ? {}
+      : {
+          "Content-Type":
+            "application/json",
+        },
+
+    body: isFormData
+      ? body
+      : JSON.stringify(body),
   });
 }
 
@@ -76,6 +83,12 @@ export function put(
 ) {
   return apiRequest(endpoint, {
     method: "PUT",
+
+    headers: {
+      "Content-Type":
+        "application/json",
+    },
+
     body: JSON.stringify(body),
   });
 }
