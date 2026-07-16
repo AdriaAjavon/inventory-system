@@ -7,20 +7,31 @@ import {
   ResponsiveContainer,
 } from "recharts";
 
-const data = [
-  { month: "Jan", sales: 4000 },
-  { month: "Feb", sales: 3000 },
-  { month: "Mar", sales: 5000 },
-  { month: "Apr", sales: 4780 },
-  { month: "May", sales: 5890 },
-  { month: "Jun", sales: 6390 },
-];
+function SalesChart({
+  dashboardData,
+}) {
+  const data =
+    dashboardData?.salesChart || [];
 
-function SalesChart() {
+  // Empty state
+  if (data.length === 0) {
+    return (
+      <div className="bg-slate-900/80 border border-slate-800 rounded-2xl p-6">
+        <h2 className="text-2xl font-bold mb-6">
+          Revenue Trend
+        </h2>
+
+        <div className="h-[300px] flex items-center justify-center text-slate-500">
+          No sales data available yet.
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="bg-slate-900/80 border border-slate-800 rounded-2xl p-6">
       <h2 className="text-2xl font-bold mb-6">
-        Sales Analytics
+        Revenue Trend
       </h2>
 
       <div className="h-[300px]">
@@ -31,13 +42,24 @@ function SalesChart() {
           <LineChart data={data}>
             <XAxis dataKey="month" />
             <YAxis />
-            <Tooltip />
+            <Tooltip
+              formatter={(value) => [
+                `$${value.toFixed(2)}`,
+                "Revenue",
+              ]}
+            />
 
             <Line
               type="monotone"
               dataKey="sales"
               stroke="#06b6d4"
               strokeWidth={3}
+              dot={{
+                r: 5,
+              }}
+              activeDot={{
+                r: 8,
+              }}
             />
           </LineChart>
         </ResponsiveContainer>

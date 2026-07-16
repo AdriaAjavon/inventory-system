@@ -1,79 +1,157 @@
-import StatsCard from "../components/StatsCard";
+import { useEffect, useState } from "react";
+
+import DashboardHeader from "../components/dashboard/DashboardHeader";
+import WelcomeBanner from "../components/dashboard/WelcomeBanner";
+import DashboardStats from "../components/dashboard/DashboardStats";
+import QuickActions from "../components/dashboard/QuickActions";
+import CommandCenter from "../components/dashboard/CommandCenter";
+import BusinessHealth from "../components/dashboard/BusinessHealth";
+import RecentActivity from "../components/dashboard/RecentActivity";
+import Notifications from "../components/dashboard/Notifications";
+import LowStockWidget from "../components/dashboard/LowStockWidget";
+import OfflineStatus from "../components/dashboard/OfflineStatus";
+import VoiceAssistant from "../components/dashboard/VoiceAssistant";
+
 import SalesChart from "../components/SalesChart";
 
 function Dashboard() {
+
+  const [dashboardData, setDashboardData] =
+    useState(null);
+
+  const [loading, setLoading] =
+    useState(true);
+
+  useEffect(() => {
+    fetchDashboard();
+  }, []);
+
+  const fetchDashboard = async () => {
+    try {
+
+      const response = await fetch(
+        "http://localhost:5000/api/dashboard"
+      );
+
+      const data =
+        await response.json();
+
+      setDashboardData(data);
+
+    } catch (error) {
+
+      console.error(error);
+
+    } finally {
+
+      setLoading(false);
+
+    }
+  };
+
+  if (loading) {
+    return (
+      <div className="text-center py-20 text-slate-400">
+        Loading Dashboard...
+      </div>
+    );
+  }
+
   return (
-    <div>
-      <div className="mb-10">
-        <h1 className="text-4xl font-bold">
-          Inventory Dashboard
-        </h1>
+    <div className="space-y-8">
 
-        <p className="text-slate-400 mt-2">
-          Monitor your business inventory and sales
-        </p>
-      </div>
+      <DashboardHeader />
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <StatsCard
-          title="Total Products"
-          value="120"
+      <WelcomeBanner />
+
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+
+        <BusinessHealth
+          dashboardData={dashboardData}
         />
 
-        <StatsCard
-          title="Orders"
-          value="58"
-        />
+        <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6">
 
-        <StatsCard
-          title="Revenue"
-          value="$12,500"
-        />
+          <h2 className="text-2xl font-bold">
+
+            AI Business Coach
+
+          </h2>
+
+          <p className="text-slate-400 mt-4">
+
+            🤖 Good morning! Your business is running smoothly today.
+
+          </p>
+
+          <ul className="mt-5 space-y-3 text-slate-300">
+
+            <li>
+              • No critical stock issues detected.
+            </li>
+
+            <li>
+              • Sales are expected to increase this afternoon.
+            </li>
+
+            <li>
+              • Mobile Money payments are increasing.
+            </li>
+
+            <li>
+              • Keep an eye on Cooking Oil stock.
+            </li>
+
+          </ul>
+
+        </div>
+
       </div>
 
-      <div className="mt-10">
-        <SalesChart />
-      </div>
+      <DashboardStats
+        dashboardData={dashboardData}
+      />
 
-      <div className="mt-10 bg-slate-900/80 border border-slate-800 rounded-2xl p-6">
+      <CommandCenter />
+
+      <QuickActions />
+
+      <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6">
+
         <h2 className="text-2xl font-bold mb-6">
-          Recent Inventory
+
+          Sales Overview
+
         </h2>
 
-        <table className="w-full">
-          <thead>
-            <tr className="text-left text-slate-400">
-              <th className="pb-4">Product</th>
-              <th className="pb-4">Category</th>
-              <th className="pb-4">Stock</th>
-              <th className="pb-4">Price</th>
-            </tr>
-          </thead>
+        <SalesChart />
 
-          <tbody>
-            <tr className="border-t border-slate-800">
-              <td className="py-4">MacBook Pro</td>
-              <td>Electronics</td>
-              <td>14</td>
-              <td>$2400</td>
-            </tr>
-
-            <tr className="border-t border-slate-800">
-              <td className="py-4">iPhone 15</td>
-              <td>Phones</td>
-              <td>32</td>
-              <td>$1200</td>
-            </tr>
-
-            <tr className="border-t border-slate-800">
-              <td className="py-4">Gaming Mouse</td>
-              <td>Accessories</td>
-              <td>58</td>
-              <td>$90</td>
-            </tr>
-          </tbody>
-        </table>
       </div>
+
+      <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
+
+        <RecentActivity
+          dashboardData={dashboardData}
+        />
+
+        <Notifications
+          dashboardData={dashboardData}
+        />
+
+      </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+
+        <LowStockWidget
+          dashboardData={dashboardData}
+        />
+
+        <OfflineStatus />
+
+      </div>
+
+      <VoiceAssistant />
+
     </div>
   );
 }

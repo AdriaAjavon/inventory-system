@@ -15,19 +15,21 @@ model Product {
   price     Float
   createdAt DateTime @default(now())
 }
+
 model ActivityLog {
   id          Int      @id @default(autoincrement())
   action      String
   productName String
   createdAt   DateTime @default(now())
 }
+
 model Sale {
   id            Int      @id @default(autoincrement())
-  receiptNumber String   @unique
   productName   String
   quantity      Int
   unitPrice     Float
   totalAmount   Float
   paymentMethod String
   createdAt     DateTime @default(now())
+  receiptNumber String   @unique
 }
