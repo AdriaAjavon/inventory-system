@@ -52,8 +52,10 @@ function App() {
           element={<SalesHistory />}
         />
 
+        {/* Receipt */}
+
         <Route
-          path="receipt/:id"
+          path="receipt/:receiptNumber"
           element={<Receipt />}
         />
 

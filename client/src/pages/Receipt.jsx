@@ -2,115 +2,173 @@ import { useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 
 function Receipt() {
-  const { id } = useParams();
+
+  const { receiptNumber } =
+    useParams();
 
   const [sale, setSale] =
     useState(null);
 
+  const [loading, setLoading] =
+    useState(true);
+
   useEffect(() => {
+
     fetchReceipt();
-  }, []);
+
+  }, [receiptNumber]);
 
   const fetchReceipt = async () => {
+
     try {
+
       const response = await fetch(
-        "http://localhost:5000/api/sales"
+
+        `http://localhost:5000/api/sales/receipt/${receiptNumber}`
+
       );
 
       const data =
         await response.json();
 
-      const foundSale =
-        data.find(
-          (sale) =>
-            sale.id === Number(id)
-        );
+      setSale(data);
 
-      setSale(foundSale);
-    } catch (error) {
-      console.error(error);
     }
+
+    catch (error) {
+
+      console.error(error);
+
+    }
+
+    finally {
+
+      setLoading(false);
+
+    }
+
   };
 
-  if (!sale) {
+  if (loading) {
+
     return (
-      <div>
+
+      <div className="text-center py-20">
+
         Loading receipt...
+
       </div>
+
     );
+
+  }
+
+  if (!sale) {
+
+    return (
+
+      <div className="text-center py-20">
+
+        Receipt not found.
+
+      </div>
+
+    );
+
   }
 
   return (
+
     <div className="max-w-2xl mx-auto">
+
       <div className="bg-slate-900 border border-slate-800 rounded-2xl p-8">
+
         <h1 className="text-3xl font-bold mb-8">
-          Receipt
+
+          InventorySys Receipt
+
         </h1>
 
         <div className="space-y-4">
+
           <p>
-            <strong>
-              Receipt Number:
-            </strong>{" "}
+
+            <strong>Receipt Number:</strong>{" "}
+
             {sale.receiptNumber}
+
           </p>
 
           <p>
-            <strong>
-              Product:
-            </strong>{" "}
+
+            <strong>Product:</strong>{" "}
+
             {sale.productName}
+
           </p>
 
           <p>
-            <strong>
-              Quantity:
-            </strong>{" "}
+
+            <strong>Quantity:</strong>{" "}
+
             {sale.quantity}
+
           </p>
 
           <p>
-            <strong>
-              Unit Price:
-            </strong>{" "}
-            $
-            {sale.unitPrice}
+
+            <strong>Unit Price:</strong>{" "}
+
+            ${sale.unitPrice.toFixed(2)}
+
           </p>
 
           <p>
-            <strong>
-              Total:
-            </strong>{" "}
-            $
-            {sale.totalAmount}
+
+            <strong>Total:</strong>{" "}
+
+            ${sale.totalAmount.toFixed(2)}
+
           </p>
 
           <p>
-            <strong>
-              Payment:
-            </strong>{" "}
+
+            <strong>Payment:</strong>{" "}
+
             {sale.paymentMethod}
+
           </p>
 
           <p>
+
             <strong>Date:</strong>{" "}
+
             {new Date(
               sale.createdAt
             ).toLocaleString()}
+
           </p>
+
         </div>
 
         <button
-          onClick={() =>
-            window.print()
-          }
-          className="mt-8 bg-cyan-500 hover:bg-cyan-400 text-black px-6 py-3 rounded-xl font-semibold"
+
+          onClick={() => window.print()}
+
+          className="mt-8 w-full bg-cyan-500 hover:bg-cyan-400 text-black font-semibold py-3 rounded-xl"
+
         >
-          Print Receipt
+
+          🖨 Print Receipt
+
         </button>
+
       </div>
+
     </div>
+
   );
+
 }
 
 export default Receipt;

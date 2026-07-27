@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 import {
   FaMicrophone,
@@ -6,17 +7,17 @@ import {
   FaCashRegister,
   FaMoneyBillWave,
   FaSearch,
+  FaTrash,
 } from "react-icons/fa";
 
 import {
   getProducts,
-} from "../services/productService";
-
-import {
   createSale,
-} from "../services/saleService";
+} from "../services/api";
 
 function Sales() {
+
+  const navigate = useNavigate();
 
   //--------------------------------------------------
   // State
@@ -25,9 +26,9 @@ function Sales() {
   const [products, setProducts] =
     useState([]);
 
-  const [selectedProduct,
-    setSelectedProduct] =
-    useState(null);
+  const [cart,
+    setCart] =
+    useState([]);
 
   const [search,
     setSearch] =
@@ -71,10 +72,17 @@ function Sales() {
     );
 
   const subtotal =
-    selectedProduct
-      ? selectedProduct.price *
-        saleData.quantity
-      : 0;
+    cart.reduce(
+
+      (total, item) =>
+
+        total +
+        item.price *
+          item.quantity,
+
+      0
+
+    );
 
   const tax = 0;
 
@@ -111,12 +119,128 @@ function Sales() {
   };
 
   //--------------------------------------------------
+  // Shopping Cart
+  //--------------------------------------------------
+
+  const addToCart = (product) => {
+
+    if (product.stock === 0) {
+
+      alert("Product is out of stock.");
+
+      return;
+
+    }
+
+    const existingItem =
+      cart.find(
+        (item) =>
+          item.id === product.id
+      );
+
+    if (existingItem) {
+
+      setCart(
+        cart.map((item) =>
+
+          item.id === product.id
+
+            ? {
+                ...item,
+                quantity:
+                  item.quantity + 1,
+              }
+
+            : item
+
+        )
+      );
+
+    } else {
+
+      setCart([
+        ...cart,
+        {
+          ...product,
+          quantity: 1,
+        },
+      ]);
+
+    }
+
+  };
+
+  const increaseQuantity = (id) => {
+
+    setCart(
+      cart.map((item) =>
+
+        item.id === id
+
+          ? {
+              ...item,
+              quantity:
+                Math.min(
+                  item.quantity + 1,
+                  item.stock
+                ),
+            }
+
+          : item
+
+      )
+    );
+
+  };
+
+  const decreaseQuantity = (id) => {
+
+    setCart(
+
+      cart
+        .map((item) =>
+
+          item.id === id
+
+            ? {
+                ...item,
+                quantity:
+                  item.quantity - 1,
+              }
+
+            : item
+
+        )
+
+        .filter(
+          (item) =>
+            item.quantity > 0
+        )
+
+    );
+
+  };
+
+  const removeFromCart = (id) => {
+
+    setCart(
+
+      cart.filter(
+        (item) =>
+          item.id !== id
+      )
+
+    );
+
+  };
+
+  //--------------------------------------------------
   // Product Selection
   //--------------------------------------------------
 
   const handleProductChange = (product) => {
 
-    setSelectedProduct(product);
+    addToCart(product);
 
     setSaleData({
 
@@ -211,35 +335,10 @@ function Sales() {
 
   const handleSale = async () => {
 
-    if (!selectedProduct) {
+    if (cart.length === 0) {
 
       alert(
-        "Please select a product."
-      );
-
-      return;
-
-    }
-
-    if (
-      saleData.quantity <= 0
-    ) {
-
-      alert(
-        "Quantity must be greater than zero."
-      );
-
-      return;
-
-    }
-
-    if (
-      saleData.quantity >
-      selectedProduct.stock
-    ) {
-
-      alert(
-        "Not enough stock available."
+        "Your cart is empty."
       );
 
       return;
@@ -250,11 +349,43 @@ function Sales() {
 
       setLoading(true);
 
-      await createSale(saleData);
+      //-----------------------------------------
+      // Process each item in the cart
+      // The backend handles:
+      //   - Saving the sale
+      //   - Deducting stock
+      //   - Activity log
+      //   - Receipt generation
+      //-----------------------------------------
+
+      let latestReceipt = null;
+
+      for (const item of cart) {
+
+        const response =
+          await createSale({
+
+            productName:
+              item.name,
+
+            quantity:
+              item.quantity,
+
+            paymentMethod:
+              saleData.paymentMethod,
+
+          });
+
+        latestReceipt =
+          response.receiptNumber;
+
+      }
 
       alert(
-        "Sale completed successfully."
+        `${cart.length} product(s) sold successfully.`
       );
+
+      setCart([]);
 
       setSaleData({
 
@@ -266,11 +397,27 @@ function Sales() {
 
       });
 
-      setSelectedProduct(null);
-
       setSearch("");
 
       await fetchProducts();
+
+      if (latestReceipt) {
+
+        navigate(
+          `/receipt/${latestReceipt}`
+        );
+
+      }
+
+      //-----------------------------------------
+      // Future Hooks
+      //-----------------------------------------
+
+      // Refresh Dashboard
+      // Refresh Activity
+      // Generate Receipt
+      // Print Receipt
+      // AI Sales Analysis
 
     }
 
@@ -419,8 +566,6 @@ function Sales() {
                   className={`w-full text-left border rounded-xl p-4 transition-all ${
                     product.stock === 0
                       ? "opacity-40 cursor-not-allowed border-slate-700"
-                      : selectedProduct?.id === product.id
-                      ? "border-cyan-500 bg-cyan-500/10"
                       : "border-slate-700 hover:border-cyan-500 hover:bg-slate-800"
                   }`}
 
@@ -515,11 +660,19 @@ function Sales() {
 
           </div>
 
-          {!selectedProduct ? (
+          {/* ======================================
+              Shopping Cart
+          ====================================== */}
+
+          {cart.length === 0 ? (
 
             <div className="text-center py-20 text-slate-500">
 
-              Select a product to begin a sale.
+              Cart is empty.
+
+              <br />
+
+              Select products from the left.
 
             </div>
 
@@ -527,100 +680,108 @@ function Sales() {
 
             <>
 
-              {/* Product Information */}
+              <div className="space-y-3 mb-6">
 
-              <div className="bg-slate-800 rounded-xl p-5 mb-6">
+                {cart.map((item) => (
 
-                <h3 className="text-xl font-bold mb-4">
+                  <div
 
-                  {selectedProduct.name}
+                    key={item.id}
 
-                </h3>
+                    className="bg-slate-800 rounded-xl p-4"
 
-                <div className="space-y-2">
+                  >
 
-                  <div className="flex justify-between">
+                    <div className="flex items-center justify-between">
 
-                    <span className="text-slate-400">
+                      <div>
 
-                      Category
+                        <h3 className="font-bold">
 
-                    </span>
+                          {item.name}
 
-                    <span>
+                        </h3>
 
-                      {selectedProduct.category}
+                        <p className="text-sm text-slate-400">
 
-                    </span>
+                          ${Number(item.price).toFixed(2)}
+
+                        </p>
+
+                      </div>
+
+                      <button
+
+                        onClick={() =>
+                          removeFromCart(item.id)
+                        }
+
+                        className="text-red-400 hover:text-red-300"
+
+                      >
+
+                        <FaTrash />
+
+                      </button>
+
+                    </div>
+
+                    <div className="flex items-center justify-between mt-4">
+
+                      <div className="flex items-center gap-3">
+
+                        <button
+
+                          onClick={() =>
+                            decreaseQuantity(item.id)
+                          }
+
+                          className="bg-slate-700 w-8 h-8 rounded-lg hover:bg-slate-600"
+
+                        >
+
+                          -
+
+                        </button>
+
+                        <span className="font-bold">
+
+                          {item.quantity}
+
+                        </span>
+
+                        <button
+
+                          onClick={() =>
+                            increaseQuantity(item.id)
+                          }
+
+                          className="bg-cyan-500 text-black w-8 h-8 rounded-lg hover:bg-cyan-400"
+
+                        >
+
+                          +
+
+                        </button>
+
+                      </div>
+
+                      <div className="font-bold text-cyan-400">
+
+                        $
+
+                        {(
+                          item.price *
+                          item.quantity
+                        ).toFixed(2)}
+
+                      </div>
+
+                    </div>
 
                   </div>
 
-                  <div className="flex justify-between">
-
-                    <span className="text-slate-400">
-
-                      Stock
-
-                    </span>
-
-                    <span>
-
-                      {selectedProduct.stock}
-
-                    </span>
-
-                  </div>
-
-                  <div className="flex justify-between">
-
-                    <span className="text-slate-400">
-
-                      Unit Price
-
-                    </span>
-
-                    <span>
-
-                      $
-                      {Number(
-                        selectedProduct.price
-                      ).toFixed(2)}
-
-                    </span>
-
-                  </div>
-
-                </div>
-
-              </div>
-
-              {/* Quantity */}
-
-              <div className="mb-6">
-
-                <label className="block mb-2 font-semibold">
-
-                  Quantity
-
-                </label>
-
-                <input
-
-                  type="number"
-
-                  min="1"
-
-                  max={selectedProduct.stock}
-
-                  value={saleData.quantity}
-
-                  onChange={
-                    handleQuantityChange
-                  }
-
-                  className="w-full bg-slate-800 border border-slate-700 rounded-xl p-3"
-
-                />
+                ))}
 
               </div>
 
@@ -654,6 +815,10 @@ function Sales() {
 
                   <option>
                     Mobile Money
+                  </option>
+
+                  <option>
+                    Card
                   </option>
 
                 </select>
@@ -728,7 +893,7 @@ function Sales() {
 
                 {loading
                   ? "Processing Sale..."
-                  : "Complete Sale"}
+                  : `Complete Sale ($${total.toFixed(2)})`}
 
               </button>
 

@@ -8,6 +8,7 @@ import {
   FaDollarSign,
   FaExclamationTriangle,
   FaTags,
+  FaTruckLoading,
 } from "react-icons/fa";
 
 import AddProductModal from "../components/AddProductModal";
@@ -19,7 +20,8 @@ import {
   createProduct,
   deleteProduct,
   updateProduct,
-} from "../services/productService";
+  receiveStock,
+} from "../services/api";
 
 function Products() {
 
@@ -52,8 +54,6 @@ const [isDetailsOpen, setIsDetailsOpen] =
 
 const [selectedProduct, setSelectedProduct] =
   useState(null);
-
-
 
   const [isAddLoading, setIsAddLoading] =
     useState(false);
@@ -89,14 +89,21 @@ const [selectedProduct, setSelectedProduct] =
 
     });
 
+  const [receiveProduct, setReceiveProduct] =
+    useState(null);
+
+  const [receiveQuantity, setReceiveQuantity] =
+    useState("");
+
+  const [isReceiveOpen, setIsReceiveOpen] =
+    useState(false);
+
   //--------------------------------------------------
   // Fetch Products
   //--------------------------------------------------
 
   useEffect(() => {
-
     fetchProducts();
-
   }, []);
 
   const fetchProducts = async () => {
@@ -112,7 +119,7 @@ const [selectedProduct, setSelectedProduct] =
 
     catch (error) {
 
-      console.error(error);
+      console.error("Failed to load products:", error);
 
     }
 
@@ -323,6 +330,75 @@ const [selectedProduct, setSelectedProduct] =
     };
 
   //--------------------------------------------------
+  // Receive Stock
+  //--------------------------------------------------
+
+  const handleReceiveStock =
+    async () => {
+
+      if (Number(receiveQuantity) <= 0) {
+
+        alert("Please enter a quantity greater than 0.");
+
+        return;
+
+      }
+
+      if (
+        receiveProduct.stockStatus ===
+        "OPENING_STOCK"
+      ) {
+
+        const proceed =
+          window.confirm(
+
+`This product is still using Opening Stock.
+
+Receiving stock now will merge estimated stock with verified supplier stock.
+
+Continue?`
+
+          );
+
+        if (!proceed) return;
+
+      }
+
+      try {
+
+        await receiveStock(
+
+          receiveProduct.id,
+
+          Number(receiveQuantity)
+
+        );
+
+        await fetchProducts();
+
+        setSelectedProduct(null);
+
+        setReceiveProduct(null);
+
+        setReceiveQuantity("");
+
+        setIsReceiveOpen(false);
+
+        alert("✅ Stock received.");
+
+      }
+
+      catch (error) {
+
+        console.error(error);
+
+        alert("❌ Failed to receive stock.");
+
+      }
+
+    };
+
+  //--------------------------------------------------
   // Close Edit Modal on Outside Click
   //--------------------------------------------------
 
@@ -462,20 +538,20 @@ const handleViewProduct = (
 
       let matchesStatus = true;
 
-      if (statusFilter === "In Stock") {
-        matchesStatus =
-          product.stock > 10;
-      }
+      if (statusFilter !== "All") {
 
-      if (statusFilter === "Low Stock") {
-        matchesStatus =
-          product.stock > 0 &&
-          product.stock <= 10;
-      }
+        const currentStatus =
+          product.stockStatus === "OPENING_STOCK"
+            ? "Opening Stock"
+            : product.stockStatus === "WAITING_FOR_RESTOCK"
+            ? "Waiting For Restock"
+            : product.stockStatus === "ACTIVE"
+            ? "Verified"
+            : "Unknown";
 
-      if (statusFilter === "Out of Stock") {
         matchesStatus =
-          product.stock === 0;
+          currentStatus === statusFilter;
+
       }
 
       return (
@@ -581,7 +657,7 @@ const handleViewProduct = (
 
           </select>
 
-          {/* Status */}
+          {/* Status Filter */}
 
           <select
             value={statusFilter}
@@ -593,21 +669,10 @@ const handleViewProduct = (
             className="bg-slate-800 border border-slate-700 rounded-xl px-4 py-3"
           >
 
-            <option>
-              All
-            </option>
-
-            <option>
-              In Stock
-            </option>
-
-            <option>
-              Low Stock
-            </option>
-
-            <option>
-              Out of Stock
-            </option>
+            <option>All</option>
+            <option>Opening Stock</option>
+            <option>Waiting For Restock</option>
+            <option>Verified</option>
 
           </select>
 
@@ -844,34 +909,32 @@ const handleViewProduct = (
                 filteredProducts.map((product) => {
 
                   let status = "";
-
                   let statusClass = "";
 
-                  if (product.stock === 0) {
+                  switch (product.stockStatus) {
 
-                    status = "Out of Stock";
+                    case "OPENING_STOCK":
+                      status = "Opening Stock";
+                      statusClass =
+                        "bg-yellow-500/20 text-yellow-400";
+                      break;
 
-                    statusClass =
-                      "bg-red-500/20 text-red-400";
+                    case "WAITING_FOR_RESTOCK":
+                      status = "Waiting For Restock";
+                      statusClass =
+                        "bg-red-500/20 text-red-400";
+                      break;
 
-                  }
+                    case "ACTIVE":
+                      status = "Verified";
+                      statusClass =
+                        "bg-green-500/20 text-green-400";
+                      break;
 
-                  else if (product.stock <= 10) {
-
-                    status = "Low Stock";
-
-                    statusClass =
-                      "bg-yellow-500/20 text-yellow-400";
-
-                  }
-
-                  else {
-
-                    status = "In Stock";
-
-                    statusClass =
-                      "bg-green-500/20 text-green-400";
-
+                    default:
+                      status = "Unknown";
+                      statusClass =
+                        "bg-slate-500/20 text-slate-400";
                   }
 
                   return (
@@ -898,15 +961,15 @@ const handleViewProduct = (
                           <div>
 
                             <h3
-  onClick={() =>
-    handleViewProduct(product)
-  }
-  className="font-semibold text-white cursor-pointer hover:text-cyan-400 transition"
->
+                              onClick={() =>
+                                handleViewProduct(product)
+                              }
+                              className="font-semibold text-white cursor-pointer hover:text-cyan-400 transition"
+                            >
 
-  {product.name}
+                              {product.name}
 
-</h3>
+                            </h3>
 
                             <p className="text-xs text-slate-500">
 
@@ -966,10 +1029,22 @@ const handleViewProduct = (
                         <div className="flex items-center justify-center gap-4">
 
                           <button
+                            onClick={() => {
+                              setReceiveProduct(product);
+                              setReceiveQuantity("");
+                              setIsReceiveOpen(true);
+                            }}
+                            className="text-green-400 hover:text-green-300 transition"
+                            title="Receive Supplier Delivery"
+                          >
+
+                            <FaTruckLoading />
+
+                          </button>
+
+                          <button
                             onClick={() =>
-                              handleEditProduct(
-                                product
-                              )
+                              handleEditProduct(product)
                             }
                             className="text-cyan-400 hover:text-cyan-300 transition"
                           >
@@ -1025,7 +1100,7 @@ const handleViewProduct = (
         isLoading={isAddLoading}
       />
 
-          {/* =======================================
+      {/* =======================================
           Edit Product Modal
       ======================================= */}
 
@@ -1048,6 +1123,65 @@ const handleViewProduct = (
         setIsOpen={setIsDetailsOpen}
         product={selectedProduct}
       />
+
+      {/* =======================================
+          Receive Stock Modal
+      ======================================= */}
+
+      {isReceiveOpen && receiveProduct && (
+        <div
+          className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4"
+          onClick={(e) => {
+            if (e.target === e.currentTarget) {
+              setIsReceiveOpen(false);
+              setReceiveProduct(null);
+              setReceiveQuantity("");
+            }
+          }}
+        >
+          <div className="bg-slate-900 border border-slate-800 rounded-2xl p-8 max-w-md w-full">
+            <h2 className="text-2xl font-bold text-white mb-2">
+              Receive Supplier Delivery
+            </h2>
+            <p className="text-slate-400 mb-6">
+              {receiveProduct.name} - Current Quantity: {receiveProduct.stock}
+            </p>
+            
+            <div className="mb-6">
+              <label className="block text-slate-400 mb-2">
+                Quantity to Receive
+              </label>
+              <input
+                type="number"
+                min="1"
+                value={receiveQuantity}
+                onChange={(e) => setReceiveQuantity(e.target.value)}
+                className="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-3 outline-none focus:border-cyan-500"
+                placeholder="Enter quantity..."
+              />
+            </div>
+
+            <div className="flex gap-3">
+              <button
+                onClick={handleReceiveStock}
+                className="flex-1 bg-green-500 hover:bg-green-400 transition px-6 py-3 rounded-xl text-black font-semibold"
+              >
+                Confirm Receive
+              </button>
+              <button
+                onClick={() => {
+                  setIsReceiveOpen(false);
+                  setReceiveProduct(null);
+                  setReceiveQuantity("");
+                }}
+                className="flex-1 bg-slate-800 hover:bg-slate-700 transition px-6 py-3 rounded-xl text-white font-semibold"
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
     </div>
   );

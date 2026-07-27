@@ -5,30 +5,28 @@ import {
   remove,
 } from "./apiClient";
 
-// ----------------------------------
-// Products
-// ----------------------------------
+// =============================================
+// Get All Products
+// =============================================
 
 export async function getProducts() {
   return await get("/api/products");
 }
 
-// ----------------------------------
-// Add Product
-// ----------------------------------
+// =============================================
+// Create Product
+// =============================================
 
-export async function createProduct(
-  product
-) {
+export async function createProduct(product) {
   return await post(
     "/api/products",
     product
   );
 }
 
-// ----------------------------------
+// =============================================
 // Update Product
-// ----------------------------------
+// =============================================
 
 export async function updateProduct(
   id,
@@ -40,9 +38,41 @@ export async function updateProduct(
   );
 }
 
-// ----------------------------------
+// =============================================
+// Update Product Stock
+// =============================================
+
+export async function updateProductStock(
+  id,
+  stock
+) {
+  return await put(
+    `/api/products/${id}/stock`,
+    {
+      stock,
+    }
+  );
+}
+
+// =============================================
+// Receive Supplier Stock
+// =============================================
+
+export async function receiveStock(
+  id,
+  quantity
+) {
+  return await put(
+    `/api/products/${id}/receive`,
+    {
+      quantity,
+    }
+  );
+}
+
+// =============================================
 // Delete Product
-// ----------------------------------
+// =============================================
 
 export async function deleteProduct(
   id
@@ -52,9 +82,9 @@ export async function deleteProduct(
   );
 }
 
-// ----------------------------------
+// =============================================
 // Import Products
-// ----------------------------------
+// =============================================
 
 export async function importProducts(
   formData

@@ -5,6 +5,9 @@ import {
   FaDollarSign,
   FaLayerGroup,
   FaCalendarAlt,
+  FaExclamationTriangle,
+  FaCheckCircle,
+  FaClock,
 } from "react-icons/fa";
 import { updateProductStock } from "../services/productService";
 
@@ -36,15 +39,33 @@ function ProductDetailsModal({ isOpen, setIsOpen, product, onStockUpdated }) {
   const price = Number(product.price ?? 0);
   const inventoryValue = stock * price;
 
-  let status = "In Stock";
-  let statusClass = "bg-green-500/20 text-green-400";
+  let status = "";
+  let statusClass = "";
+  let statusMessage = "";
 
-  if (stock === 0) {
-    status = "Out of Stock";
-    statusClass = "bg-red-500/20 text-red-400";
-  } else if (stock <= 10) {
-    status = "Low Stock";
-    statusClass = "bg-yellow-500/20 text-yellow-400";
+  switch (product.stockStatus) {
+    case "OPENING_STOCK":
+      status = "Opening Stock";
+      statusClass = "bg-yellow-500/20 text-yellow-400";
+      statusMessage =
+        "This inventory is your estimated opening stock. It has not yet been verified by a supplier.";
+      break;
+    case "WAITING_FOR_RESTOCK":
+      status = "Waiting For Restock";
+      statusClass = "bg-red-500/20 text-red-400";
+      statusMessage =
+        "Opening stock has been completely sold. Waiting for the first verified supplier delivery.";
+      break;
+    case "ACTIVE":
+      status = "Verified";
+      statusClass = "bg-green-500/20 text-green-400";
+      statusMessage =
+        "Inventory has been verified through supplier deliveries.";
+      break;
+    default:
+      status = "Unknown";
+      statusClass = "bg-slate-500/20 text-slate-400";
+      statusMessage = "Status unavailable.";
   }
 
   const adjustStock = (amount) => {
@@ -59,7 +80,7 @@ function ProductDetailsModal({ isOpen, setIsOpen, product, onStockUpdated }) {
         stock: currentStock,
       });
 
-      alert("Stock updated successfully.");
+      alert("✅ Stock updated successfully.");
 
       // Call the callback to refresh the product list
       onStockUpdated?.();
@@ -67,7 +88,7 @@ function ProductDetailsModal({ isOpen, setIsOpen, product, onStockUpdated }) {
       setIsOpen(false);
     } catch (error) {
       console.error(error);
-      alert("Failed to update stock.");
+      alert("❌ Failed to update stock.");
     } finally {
       setSaving(false);
     }
@@ -115,11 +136,33 @@ function ProductDetailsModal({ isOpen, setIsOpen, product, onStockUpdated }) {
             value={`$${inventoryValue.toFixed(2)}`}
             valueClass="text-emerald-400 font-bold"
           />
-          <DetailRow
-            label="Status"
-            value={status}
-            valueClass={`px-3 py-1 rounded-full text-sm font-semibold ${statusClass}`}
-          />
+          
+          {/* Status with Icon and Message */}
+          <div className="flex items-center justify-between bg-slate-800 rounded-xl p-4">
+            <div className="flex items-center gap-3">
+              {product.stockStatus === "ACTIVE" && <FaCheckCircle className="text-green-400" />}
+              {product.stockStatus === "OPENING_STOCK" && <FaClock className="text-yellow-400" />}
+              {product.stockStatus === "WAITING_FOR_RESTOCK" && <FaExclamationTriangle className="text-red-400" />}
+              <span className="text-slate-400">Status</span>
+            </div>
+            <span className={`px-3 py-1 rounded-full text-sm font-semibold ${statusClass}`}>
+              {status}
+            </span>
+          </div>
+
+          {/* Status Message */}
+          <div
+            className={`rounded-xl p-4 text-sm ${
+              product.stockStatus === "ACTIVE"
+                ? "bg-green-500/10 text-green-300 border border-green-500/20"
+                : product.stockStatus === "OPENING_STOCK"
+                ? "bg-yellow-500/10 text-yellow-300 border border-yellow-500/20"
+                : "bg-red-500/10 text-red-300 border border-red-500/20"
+            }`}
+          >
+            {statusMessage}
+          </div>
+
           <DetailRow
             icon={FaCalendarAlt}
             label="Created"
@@ -141,12 +184,13 @@ function ProductDetailsModal({ isOpen, setIsOpen, product, onStockUpdated }) {
             <div className="w-full h-3 bg-slate-700 rounded-full overflow-hidden">
               <div
                 className={`h-full transition-all duration-500 ${
-                  currentStock === 0
-                    ? "bg-red-500"
-                    : currentStock <= 10
+                  product.stockStatus === "ACTIVE"
+                    ? "bg-green-500"
+                    : product.stockStatus === "OPENING_STOCK"
                     ? "bg-yellow-500"
-                    : "bg-green-500"
+                    : "bg-red-500"
                 }`}
+                // 👇 SIMPLIFIED - Removed unnecessary math
                 style={{ width: `${Math.min(currentStock, 100)}%` }}
               />
             </div>
@@ -154,7 +198,17 @@ function ProductDetailsModal({ isOpen, setIsOpen, product, onStockUpdated }) {
 
           {/* Stock Adjustment Controls */}
           <div className="space-y-4">
-            <div className="flex justify-center gap-3">
+            {/* 👇 NEW Heading and description */}
+            <div>
+              <h3 className="text-lg font-semibold text-white">
+                Manual Stock Adjustment
+              </h3>
+              <p className="text-slate-400 text-sm">
+                Use this only for inventory corrections, audits, damaged goods, or counting mistakes.
+              </p>
+            </div>
+
+            <div className="flex justify-center gap-3 flex-wrap">
               <button
                 onClick={() => adjustStock(-10)}
                 className="px-4 py-2 rounded-lg bg-red-500 hover:bg-red-600 transition text-white"
@@ -212,7 +266,7 @@ function ProductDetailsModal({ isOpen, setIsOpen, product, onStockUpdated }) {
                   saving ? "opacity-50 cursor-not-allowed" : ""
                 }`}
               >
-                {saving ? "Saving..." : "Save Changes"}
+                {saving ? "Saving..." : "Save Stock Adjustment"} {/* 👇 UPDATED button text */}
               </button>
             </div>
           </div>
