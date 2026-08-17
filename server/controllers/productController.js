@@ -2,6 +2,20 @@ import prisma from "../prisma/prismaClient.js";
 import fs from "fs";
 import csv from "csv-parser";
 
+// =============================================
+// Constants
+// =============================================
+
+const STOCK_STATUS = {
+  OPENING: "OPENING_STOCK",
+  WAITING: "WAITING_FOR_RESTOCK",
+  ACTIVE: "ACTIVE",
+};
+
+// =============================================
+// Get All Products
+// =============================================
+
 export const getProducts = async (
   req,
   res
@@ -22,6 +36,10 @@ export const getProducts = async (
   }
 };
 
+// =============================================
+// Create Product
+// =============================================
+
 export const createProduct = async (
   req,
   res
@@ -34,13 +52,43 @@ export const createProduct = async (
       price,
     } = req.body;
 
+    // ✅ Validation
+    if (!name || !category) {
+      return res.status(400).json({
+        error: "Name and category are required.",
+      });
+    }
+
+    const stockNum = Number(stock);
+    const priceNum = Number(price);
+
+    if (isNaN(stockNum) || isNaN(priceNum)) {
+      return res.status(400).json({
+        error: "Stock and price must be valid numbers.",
+      });
+    }
+
+    if (stockNum < 0 || priceNum < 0) {
+      return res.status(400).json({
+        error: "Stock and price cannot be negative.",
+      });
+    }
+
+    if (priceNum === 0) {
+      return res.status(400).json({
+        error: "Price cannot be zero.",
+      });
+    }
+
     const product =
       await prisma.product.create({
         data: {
           name,
           category,
-          stock: Number(stock),
-          price: Number(price),
+          stock: stockNum,
+          price: priceNum,
+          // Every manually entered product starts as opening stock
+          stockStatus: STOCK_STATUS.OPENING,
         },
       });
 
@@ -48,6 +96,7 @@ export const createProduct = async (
       data: {
         action: "Added Product",
         productName: name,
+        details: `Opening stock: ${stock}`,
       },
     });
 
@@ -58,6 +107,10 @@ export const createProduct = async (
     });
   }
 };
+
+// =============================================
+// Import Products from CSV
+// =============================================
 
 export const importProducts = async (
   req,
@@ -79,11 +132,22 @@ export const importProducts = async (
     fs.createReadStream(req.file.path)
       .pipe(csv())
       .on("data", (row) => {
+        const stockNum = Number(row.stock);
+        const priceNum = Number(row.price);
+
+        // Skip invalid rows
+        if (isNaN(stockNum) || isNaN(priceNum)) {
+          console.warn(`Skipping invalid row: ${JSON.stringify(row)}`);
+          return;
+        }
+
         products.push({
           name: row.name,
           category: row.category,
-          stock: Number(row.stock),
-          price: Number(row.price),
+          stock: stockNum,
+          price: priceNum,
+          // Imported inventory is treated as opening stock
+          stockStatus: STOCK_STATUS.OPENING,
         });
       })
       .on("end", async () => {
@@ -97,10 +161,16 @@ export const importProducts = async (
             data: {
               action: "Imported Products",
               productName: `${products.length} Products`,
+              details: `${products.length} product(s) imported from CSV`,
             },
           });
 
-          fs.unlinkSync(req.file.path);
+          // ✅ Safe cleanup
+          try {
+            fs.unlinkSync(req.file.path);
+          } catch (err) {
+            console.error("Failed to delete CSV file:", err);
+          }
 
           return res.json({
             success: true,
@@ -127,6 +197,10 @@ export const importProducts = async (
 
   }
 };
+
+// =============================================
+// Update Product (Full Update)
+// =============================================
 
 export const updateProduct = async (
   req,
@@ -155,6 +229,34 @@ export const updateProduct = async (
       });
     }
 
+    // ✅ Validation
+    if (!name || !category) {
+      return res.status(400).json({
+        error: "Name and category are required.",
+      });
+    }
+
+    const stockNum = Number(stock);
+    const priceNum = Number(price);
+
+    if (isNaN(stockNum) || isNaN(priceNum)) {
+      return res.status(400).json({
+        error: "Stock and price must be valid numbers.",
+      });
+    }
+
+    if (stockNum < 0 || priceNum < 0) {
+      return res.status(400).json({
+        error: "Stock and price cannot be negative.",
+      });
+    }
+
+    if (priceNum === 0) {
+      return res.status(400).json({
+        error: "Price cannot be zero.",
+      });
+    }
+
     const updatedProduct =
       await prisma.product.update({
         where: {
@@ -163,8 +265,8 @@ export const updateProduct = async (
         data: {
           name,
           category,
-          stock: Number(stock),
-          price: Number(price),
+          stock: stockNum,
+          price: priceNum,
         },
       });
 
@@ -172,6 +274,7 @@ export const updateProduct = async (
       data: {
         action: "Updated Product",
         productName: updatedProduct.name,
+        details: "Product information updated",
       },
     });
 
@@ -186,6 +289,10 @@ export const updateProduct = async (
   }
 };
 
+// =============================================
+// Update Product Stock (Manual Adjustment)
+// =============================================
+
 export const updateProductStock = async (
   req,
   res
@@ -195,6 +302,27 @@ export const updateProductStock = async (
     const { id } = req.params;
 
     const { stock } = req.body;
+
+    // ✅ Validation
+    if (stock === undefined || stock === null) {
+      return res.status(400).json({
+        error: "Stock value is required.",
+      });
+    }
+
+    const stockNum = Number(stock);
+
+    if (isNaN(stockNum)) {
+      return res.status(400).json({
+        error: "Stock must be a valid number.",
+      });
+    }
+
+    if (stockNum < 0) {
+      return res.status(400).json({
+        error: "Stock cannot be negative.",
+      });
+    }
 
     const existingProduct =
       await prisma.product.findUnique({
@@ -215,15 +343,15 @@ export const updateProductStock = async (
           id: Number(id),
         },
         data: {
-          stock: Number(stock),
+          stock: stockNum,
         },
       });
 
     await prisma.activityLog.create({
       data: {
         action: "Adjusted Stock",
-        productName:
-          updatedProduct.name,
+        productName: updatedProduct.name,
+        details: `Stock manually changed to ${updatedProduct.stock}`,
       },
     });
 
@@ -237,6 +365,116 @@ export const updateProductStock = async (
 
   }
 };
+
+// =============================================
+// Receive Stock from Supplier
+// =============================================
+
+export const receiveStock = async (req, res) => {
+  try {
+
+    const { id } = req.params;
+    const { quantity } = req.body;
+
+    // ✅ Validation
+    if (!quantity && quantity !== 0) {
+      return res.status(400).json({
+        error: "Quantity is required.",
+      });
+    }
+
+    const quantityNum = Number(quantity);
+
+    if (isNaN(quantityNum)) {
+      return res.status(400).json({
+        error: "Quantity must be a valid number.",
+      });
+    }
+
+    if (quantityNum <= 0) {
+      return res.status(400).json({
+        error: "Quantity must be greater than zero.",
+      });
+    }
+
+    const product = await prisma.product.findUnique({
+      where: {
+        id: Number(id),
+      },
+    });
+
+    if (!product) {
+      return res.status(404).json({
+        error: "Product not found",
+      });
+    }
+
+    const newStock =
+      product.stock + quantityNum;
+
+    // ✅ Optimized: Return updated product from transaction
+    let updatedProduct;
+
+    await prisma.$transaction(async (tx) => {
+
+      if (product.stockStatus === STOCK_STATUS.WAITING) {
+
+        updatedProduct = await tx.product.update({
+          where: {
+            id: product.id,
+          },
+          data: {
+            stock: newStock,
+            stockStatus: STOCK_STATUS.ACTIVE,
+          },
+        });
+
+        await tx.activityLog.create({
+          data: {
+            action: "First Verified Restock",
+            productName: product.name,
+            details: `${quantityNum} unit(s) received. Product is now ACTIVE.`,
+          },
+        });
+
+      } else {
+
+        updatedProduct = await tx.product.update({
+          where: {
+            id: product.id,
+          },
+          data: {
+            stock: newStock,
+          },
+        });
+
+        await tx.activityLog.create({
+          data: {
+            action: "Stock Received",
+            productName: product.name,
+            details: `${quantityNum} unit(s) received.`,
+          },
+        });
+
+      }
+
+    });
+
+    // ✅ Return the updated product from the transaction
+    res.json(updatedProduct);
+
+  } catch (error) {
+
+    res.status(500).json({
+      error: error.message,
+    });
+
+  }
+};
+
+// =============================================
+// Delete Product
+// =============================================
 
 export const deleteProduct = async (
   req,
@@ -252,6 +490,13 @@ export const deleteProduct = async (
         },
       });
 
+    // ✅ Check if product exists before deleting
+    if (!product) {
+      return res.status(404).json({
+        error: "Product not found",
+      });
+    }
+
     await prisma.product.delete({
       where: {
         id: Number(id),
@@ -262,6 +507,7 @@ export const deleteProduct = async (
       data: {
         action: "Deleted Product",
         productName: product.name,
+        details: "Product removed from inventory",
       },
     });
 
@@ -279,6 +525,10 @@ export const deleteProduct = async (
   }
 };
 
+// =============================================
+// Check Product Stock
+// =============================================
+
 export const checkProductStock = async (req, res) => {
   try {
     const { id } = req.params;
@@ -291,6 +541,7 @@ export const checkProductStock = async (req, res) => {
         id: true,
         name: true,
         stock: true,
+        stockStatus: true, // ✅ Added for completeness
       },
     });
 
@@ -306,6 +557,7 @@ export const checkProductStock = async (req, res) => {
       product: product,
       inStock: product.stock > 0,
       stockLevel: product.stock,
+      stockStatus: product.stockStatus,
     });
 
   } catch (error) {

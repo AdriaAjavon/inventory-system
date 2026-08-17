@@ -8,6 +8,7 @@ import activityRoutes from "./routes/activityRoutes.js";
 import salesRoutes from "./routes/salesRoutes.js";
 import dashboardRoutes from "./routes/dashboardRoutes.js";
 import commandRoutes from "./routes/commandRoutes.js";
+import analyticsRoutes from "./routes/analyticsRoutes.js";
 
 dotenv.config();
 
@@ -46,6 +47,9 @@ app.use("/api/sales", salesRoutes);
 
 // Dashboard
 app.use("/api/dashboard", dashboardRoutes);
+
+// Business Health / Analytics
+app.use("/api/analytics", analyticsRoutes);
 
 // Business Command Center
 app.use("/api/command", commandRoutes);

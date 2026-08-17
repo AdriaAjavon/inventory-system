@@ -7,19 +7,27 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+enum StockStatus {
+  OPENING_STOCK
+  WAITING_FOR_RESTOCK
+  ACTIVE
+}
+
 model Product {
-  id        Int      @id @default(autoincrement())
-  name      String   @unique
-  category  String
-  stock     Int
-  price     Float
-  createdAt DateTime @default(now())
+  id          Int         @id @default(autoincrement())
+  name        String      @unique
+  category    String
+  stock       Int
+  price       Float
+  stockStatus StockStatus @default(ACTIVE)
+  createdAt   DateTime    @default(now())
 }
 
 model ActivityLog {
   id          Int      @id @default(autoincrement())
   action      String
   productName String
+  details     String?
   createdAt   DateTime @default(now())
 }
 
@@ -30,6 +38,6 @@ model Sale {
   unitPrice     Float
   totalAmount   Float
   paymentMethod String
-  createdAt     DateTime @default(now())
   receiptNumber String   @unique
+  createdAt     DateTime @default(now())
 }

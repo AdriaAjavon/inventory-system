@@ -1,161 +1,167 @@
 import xlsx from "xlsx";
-
 import prisma from "../prisma/prismaClient.js";
 
-export const importProducts = async (
-  req,
-  res
-) => {
+export const importProducts = async (req, res) => {
   try {
-
     if (!req.file) {
       return res.status(400).json({
         error: "No file uploaded.",
       });
     }
 
-    const workbook =
-      xlsx.read(req.file.buffer, {
-        type: "buffer",
-      });
+    const workbook = xlsx.read(req.file.buffer, {
+      type: "buffer",
+    });
 
     const sheet =
-      workbook.Sheets[
-        workbook.SheetNames[0]
-      ];
+      workbook.Sheets[workbook.SheetNames[0]];
 
     const rows =
       xlsx.utils.sheet_to_json(sheet);
 
     let imported = 0;
+    let updated = 0;
     let skipped = 0;
 
-    const duplicates = [];
     const invalidRows = [];
 
     for (const row of rows) {
+      const name = (row.name ?? row.Name ?? "").trim();
 
-      const name =
-        row.name ??
-        row.Name;
-
-      const category =
+      const category = (
         row.category ??
-        row.Category;
+        row.Category ??
+        ""
+      ).trim();
 
       const stock = Number(
         row.stock ??
-        row.Stock ??
-        0
+          row.Stock ??
+          0
       );
 
       const price = Number(
         row.price ??
-        row.Price ??
-        0
+          row.Price ??
+          0
       );
 
-      // Required fields
+      // ===========================
+      // Validate Required Fields
+      // ===========================
 
-      if (
-        !name ||
-        !category
-      ) {
-
+      if (!name || !category) {
         skipped++;
 
         invalidRows.push({
-          name:
-            name ??
-            "Unknown Product",
-          reason:
-            "Missing required fields",
+          name: name || "Unknown Product",
+          reason: "Missing required fields",
         });
 
         continue;
-
       }
 
-      // Duplicate check
+      // ===========================
+      // Check if Product Exists
+      // ===========================
 
       const existing =
         await prisma.product.findFirst({
           where: {
-            name,
+            name: {
+              equals: name,
+              mode: "insensitive",
+            },
           },
         });
 
+      // ===========================
+      // UPDATE Existing Product
+      // ===========================
+
       if (existing) {
+        await prisma.product.update({
+          where: {
+            id: existing.id,
+          },
 
-        skipped++;
+          data: {
+            category,
 
-        duplicates.push(name);
+            stock,
 
-        continue;
+            stockStatus: "OPENING_STOCK",
 
-      }
-
-      try {
-
-        const createdProduct =
-          await prisma.product.create({
-            data: {
-              name,
-              category,
-              stock,
+            ...(price > 0 && {
               price,
-            },
-          });
+            }),
+          },
+        });
 
         await prisma.activityLog.create({
           data: {
-            action:
-              "Imported Product",
-            productName:
-              createdProduct.name,
+            action: "Updated Product",
+            productName: name,
+            details: "Updated through CSV import",
           },
         });
 
-        imported++;
+        updated++;
 
-      } catch (error) {
-
-        skipped++;
-
-        invalidRows.push({
-          name,
-          reason:
-            error.message,
-        });
-
+        continue;
       }
 
+      // ===========================
+      // CREATE New Product
+      // ===========================
+
+      const created =
+        await prisma.product.create({
+          data: {
+            name,
+            category,
+            stock,
+            price,
+            stockStatus: "OPENING_STOCK",
+          },
+        });
+
+      await prisma.activityLog.create({
+        data: {
+          action: "Imported Product",
+          productName: created.name,
+          details: "Created through CSV import",
+        },
+      });
+
+      imported++;
     }
 
     res.json({
-
       success: true,
 
       imported,
 
-      skipped,
+      updated,
 
-      duplicates,
+      skipped,
 
       invalidRows,
 
-      message:
-        `${imported} product(s) imported successfully. ${skipped} skipped.`,
+      message: `
+Import Complete!
 
+Imported: ${imported}
+Updated: ${updated}
+Skipped: ${skipped}
+      `,
     });
-
   } catch (error) {
-
     console.error(error);
 
     res.status(500).json({
+      success: false,
       error: error.message,
     });
-
   }
 };
