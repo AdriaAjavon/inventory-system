@@ -11,6 +11,7 @@ import Activity from "./pages/Activity";
 import Sales from "./pages/Sales";
 import SalesHistory from "./pages/SalesHistory";
 import Receipt from "./pages/Receipt";
+import Analytics from "./pages/Analytics";
 
 function App() {
   return (
@@ -76,6 +77,13 @@ function App() {
         <Route
           path="activity"
           element={<Activity />}
+        />
+
+        {/* Business Health / Analytics */}
+
+        <Route
+          path="analytics"
+          element={<Analytics />}
         />
 
       </Route>

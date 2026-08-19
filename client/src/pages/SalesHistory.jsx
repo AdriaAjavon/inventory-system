@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 
 import {
   FaReceipt,
@@ -39,7 +39,7 @@ function SalesHistory() {
   // Statistics
   //--------------------------------------------------
 
-  const totalRevenue =
+  const totalRevenue = useMemo(() =>
     sales.reduce(
 
       (sum, sale) =>
@@ -48,27 +48,27 @@ function SalesHistory() {
 
       0
 
-    );
+    ), [sales]);
 
-  const totalSales =
-    sales.length;
+  const totalSales = useMemo(() =>
+    sales.length, [sales]);
 
-  const averageSale =
+  const averageSale = useMemo(() =>
     totalSales > 0
 
       ? totalRevenue /
         totalSales
 
-      : 0;
+      : 0, [totalSales, totalRevenue]);
 
-  const cashSales =
+  const cashSales = useMemo(() =>
     sales.filter(
 
       sale =>
         sale.paymentMethod ===
         "Cash"
 
-    ).length;
+    ).length, [sales]);
 
   //--------------------------------------------------
   // Load Sales
@@ -103,7 +103,8 @@ function SalesHistory() {
   // Filter Sales
   //--------------------------------------------------
 
-  const filteredSales = sales.filter(
+  const filteredSales = useMemo(() =>
+    sales.filter(
     (sale) => {
 
       const matchesSearch =
@@ -151,7 +152,7 @@ function SalesHistory() {
       );
 
     }
-  );
+  ), [sales, search, paymentFilter, dateFilter]);
 
   //--------------------------------------------------
   // UI
@@ -159,21 +160,21 @@ function SalesHistory() {
 
   return (
 
-    <div>
+    <div className="min-w-0 px-4 sm:px-6 lg:px-8 py-4 sm:py-6 lg:py-8 max-w-full">
 
       {/* =====================================
           Header
       ===================================== */}
 
-      <div className="mb-8">
+      <div className="mb-6 sm:mb-8 min-w-0">
 
-        <h1 className="text-4xl font-bold">
+        <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-white truncate">
 
           Sales History
 
         </h1>
 
-        <p className="text-slate-400 mt-2">
+        <p className="text-slate-400 mt-1 sm:mt-2 text-sm sm:text-base">
 
           View and manage completed sales.
 
@@ -185,16 +186,16 @@ function SalesHistory() {
           Search & Filters
       ===================================== */}
 
-      <div className="bg-slate-900 border border-slate-800 rounded-2xl p-5 mb-8">
+      <div className="bg-slate-900 border border-slate-800 rounded-2xl p-4 sm:p-5 mb-6 sm:mb-8 min-w-0">
 
-        <div className="grid lg:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
 
           {/* Search */}
 
-          <div className="relative">
+          <div className="relative min-w-0">
 
             <FaSearch
-              className="absolute left-4 top-4 text-slate-500"
+              className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 pointer-events-none text-sm sm:text-base"
             />
 
             <input
@@ -211,7 +212,7 @@ function SalesHistory() {
                 )
               }
 
-              className="w-full bg-slate-800 border border-slate-700 rounded-xl py-3 pl-11 pr-4 outline-none focus:border-cyan-500"
+              className="w-full bg-slate-800 border border-slate-700 rounded-xl py-2.5 sm:py-3 pl-10 sm:pl-11 pr-4 outline-none focus:border-cyan-500 text-sm sm:text-base min-w-0"
 
             />
 
@@ -229,7 +230,7 @@ function SalesHistory() {
               )
             }
 
-            className="bg-slate-800 border border-slate-700 rounded-xl px-4 py-3"
+            className="bg-slate-800 border border-slate-700 rounded-xl px-3 sm:px-4 py-2.5 sm:py-3 text-sm sm:text-base w-full min-w-0"
 
           >
 
@@ -259,7 +260,7 @@ function SalesHistory() {
               )
             }
 
-            className="bg-slate-800 border border-slate-700 rounded-xl px-4 py-3"
+            className="bg-slate-800 border border-slate-700 rounded-xl px-3 sm:px-4 py-2.5 sm:py-3 text-sm sm:text-base w-full min-w-0"
 
           >
 
@@ -281,23 +282,23 @@ function SalesHistory() {
           Statistics
       ===================================== */}
 
-      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-5 mb-8">
+      <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-3 sm:gap-4 lg:gap-5 mb-6 sm:mb-8">
 
         {/* Revenue */}
 
-        <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6">
+        <div className="bg-slate-900 border border-slate-800 rounded-2xl p-4 sm:p-5 lg:p-6 min-w-0">
 
           <div className="flex items-center justify-between">
 
-            <div>
+            <div className="min-w-0">
 
-              <p className="text-slate-400">
+              <p className="text-slate-400 text-xs sm:text-sm">
 
                 Revenue
 
               </p>
 
-              <h2 className="text-3xl font-bold mt-2">
+              <h2 className="text-2xl sm:text-3xl font-bold mt-1 sm:mt-2 truncate">
 
                 $
 
@@ -308,7 +309,7 @@ function SalesHistory() {
             </div>
 
             <FaDollarSign
-              className="text-green-400"
+              className="text-green-400 text-xl sm:text-2xl flex-shrink-0 ml-2"
               size={28}
             />
 
@@ -318,19 +319,19 @@ function SalesHistory() {
 
         {/* Sales */}
 
-        <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6">
+        <div className="bg-slate-900 border border-slate-800 rounded-2xl p-4 sm:p-5 lg:p-6 min-w-0">
 
           <div className="flex items-center justify-between">
 
-            <div>
+            <div className="min-w-0">
 
-              <p className="text-slate-400">
+              <p className="text-slate-400 text-xs sm:text-sm">
 
                 Sales
 
               </p>
 
-              <h2 className="text-3xl font-bold mt-2">
+              <h2 className="text-2xl sm:text-3xl font-bold mt-1 sm:mt-2 truncate">
 
                 {totalSales}
 
@@ -339,7 +340,7 @@ function SalesHistory() {
             </div>
 
             <FaShoppingCart
-              className="text-cyan-400"
+              className="text-cyan-400 text-xl sm:text-2xl flex-shrink-0 ml-2"
               size={28}
             />
 
@@ -349,19 +350,19 @@ function SalesHistory() {
 
         {/* Average */}
 
-        <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6">
+        <div className="bg-slate-900 border border-slate-800 rounded-2xl p-4 sm:p-5 lg:p-6 min-w-0">
 
           <div className="flex items-center justify-between">
 
-            <div>
+            <div className="min-w-0">
 
-              <p className="text-slate-400">
+              <p className="text-slate-400 text-xs sm:text-sm">
 
                 Average Sale
 
               </p>
 
-              <h2 className="text-3xl font-bold mt-2">
+              <h2 className="text-2xl sm:text-3xl font-bold mt-1 sm:mt-2 truncate">
 
                 $
 
@@ -372,7 +373,7 @@ function SalesHistory() {
             </div>
 
             <FaReceipt
-              className="text-yellow-400"
+              className="text-yellow-400 text-xl sm:text-2xl flex-shrink-0 ml-2"
               size={28}
             />
 
@@ -382,19 +383,19 @@ function SalesHistory() {
 
         {/* Cash */}
 
-        <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6">
+        <div className="bg-slate-900 border border-slate-800 rounded-2xl p-4 sm:p-5 lg:p-6 min-w-0">
 
           <div className="flex items-center justify-between">
 
-            <div>
+            <div className="min-w-0">
 
-              <p className="text-slate-400">
+              <p className="text-slate-400 text-xs sm:text-sm">
 
                 Cash Sales
 
               </p>
 
-              <h2 className="text-3xl font-bold mt-2">
+              <h2 className="text-2xl sm:text-3xl font-bold mt-1 sm:mt-2 truncate">
 
                 {cashSales}
 
@@ -403,7 +404,7 @@ function SalesHistory() {
             </div>
 
             <FaMoneyBillWave
-              className="text-emerald-400"
+              className="text-emerald-400 text-xl sm:text-2xl flex-shrink-0 ml-2"
               size={28}
             />
 
@@ -417,132 +418,236 @@ function SalesHistory() {
           Sales Table
       ===================================== */}
 
-      <div className="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden">
+      <div className="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden min-w-0">
 
-        <div className="overflow-x-auto">
+        {filteredSales.length === 0 ? (
 
-          <table className="w-full">
+          <div className="p-8 sm:p-12 lg:p-20 text-center">
 
-            <thead className="bg-slate-950">
+            <div className="flex flex-col items-center">
 
-              <tr className="text-left text-slate-400">
+              <FaReceipt
+                size={36}
+                className="text-slate-600 mb-3 sm:mb-4"
+              />
 
-                <th className="p-5">
-                  Receipt
-                </th>
+              <h3 className="text-lg sm:text-xl font-semibold text-white">
 
-                <th className="p-5">
-                  Product
-                </th>
+                No Sales Found
 
-                <th className="p-5">
-                  Qty
-                </th>
+              </h3>
 
-                <th className="p-5">
-                  Total
-                </th>
+              <p className="text-slate-500 mt-1 sm:mt-2 text-sm sm:text-base">
 
-                <th className="p-5">
-                  Payment
-                </th>
+                Try changing your filters or complete a new sale.
 
-                <th className="p-5">
-                  Date
-                </th>
+              </p>
 
-              </tr>
+            </div>
 
-            </thead>
+          </div>
 
-            <tbody>
+        ) : (
 
-              {filteredSales.length === 0 ? (
+          <>
 
-                <tr>
+            {/* Desktop/Tablet Table View */}
+            <div className="hidden md:block overflow-x-auto">
 
-                  <td
-                    colSpan={6}
-                    className="py-20 text-center"
+              <table className="w-full min-w-[700px]">
+
+                <thead className="bg-slate-950">
+
+                  <tr className="text-left text-slate-400 text-xs sm:text-sm">
+
+                    <th className="p-3 sm:p-4 lg:p-5 whitespace-nowrap">
+                      Receipt
+                    </th>
+
+                    <th className="p-3 sm:p-4 lg:p-5 whitespace-nowrap">
+                      Product
+                    </th>
+
+                    <th className="p-3 sm:p-4 lg:p-5 whitespace-nowrap">
+                      Qty
+                    </th>
+
+                    <th className="p-3 sm:p-4 lg:p-5 whitespace-nowrap">
+                      Total
+                    </th>
+
+                    <th className="p-3 sm:p-4 lg:p-5 whitespace-nowrap">
+                      Payment
+                    </th>
+
+                    <th className="p-3 sm:p-4 lg:p-5 whitespace-nowrap">
+                      Date
+                    </th>
+
+                  </tr>
+
+                </thead>
+
+                <tbody>
+
+                  {filteredSales.map((sale) => {
+
+                    const paymentClass =
+                      sale.paymentMethod === "Cash"
+
+                        ? "bg-green-500/20 text-green-400"
+
+                        : "bg-cyan-500/20 text-cyan-400";
+
+                    return (
+
+                      <tr
+
+                        key={sale.id}
+
+                        className="border-t border-slate-800 hover:bg-slate-800/40 transition-all"
+
+                      >
+
+                        {/* Receipt */}
+
+                        <td className="p-3 sm:p-4 lg:p-5">
+
+                          <Link
+
+                            to={`/receipt/${sale.id}`}
+
+                            className="text-cyan-400 hover:text-cyan-300 font-semibold text-sm sm:text-base"
+
+                          >
+
+                            {sale.receiptNumber}
+
+                          </Link>
+
+                        </td>
+
+                        {/* Product */}
+
+                        <td className="p-3 sm:p-4 lg:p-5">
+
+                          <div className="min-w-0">
+
+                            <h3 className="font-semibold text-white text-sm sm:text-base truncate max-w-[150px] sm:max-w-[200px]">
+
+                              {sale.productName}
+
+                            </h3>
+
+                            <p className="text-xs text-slate-500">
+
+                              Sale #{sale.id}
+
+                            </p>
+
+                          </div>
+
+                        </td>
+
+                        {/* Quantity */}
+
+                        <td className="p-3 sm:p-4 lg:p-5 text-sm sm:text-base">
+
+                          {sale.quantity}
+
+                        </td>
+
+                        {/* Total */}
+
+                        <td className="p-3 sm:p-4 lg:p-5 font-semibold text-sm sm:text-base">
+
+                          $
+
+                          {Number(
+                            sale.totalAmount
+                          ).toFixed(2)}
+
+                        </td>
+
+                        {/* Payment */}
+
+                        <td className="p-3 sm:p-4 lg:p-5">
+
+                          <span
+
+                            className={`px-2 sm:px-3 py-1 rounded-full text-xs sm:text-sm font-medium whitespace-nowrap ${paymentClass}`}
+
+                          >
+
+                            {sale.paymentMethod}
+
+                          </span>
+
+                        </td>
+
+                        {/* Date */}
+
+                        <td className="p-3 sm:p-4 lg:p-5 text-xs sm:text-sm text-slate-400 whitespace-nowrap">
+
+                          {new Date(
+                            sale.createdAt
+                          ).toLocaleString()}
+
+                        </td>
+
+                      </tr>
+
+                    );
+
+                  })}
+
+                </tbody>
+
+              </table>
+
+            </div>
+
+            {/* Mobile Card View */}
+            <div className="md:hidden">
+
+              {filteredSales.map((sale) => {
+
+                const paymentClass =
+                  sale.paymentMethod === "Cash"
+
+                    ? "bg-green-500/20 text-green-400"
+
+                    : "bg-cyan-500/20 text-cyan-400";
+
+                return (
+
+                  <div
+
+                    key={sale.id}
+
+                    className="border-b border-slate-800 last:border-0 p-4 hover:bg-slate-800/30 transition"
+
                   >
 
-                    <div className="flex flex-col items-center">
+                    <div className="flex flex-col gap-2">
 
-                      <FaReceipt
-                        size={45}
-                        className="text-slate-600 mb-4"
-                      />
+                      <div className="flex items-start justify-between">
 
-                      <h3 className="text-xl font-semibold">
+                        <div className="min-w-0 flex-1">
 
-                        No Sales Found
+                          <Link
 
-                      </h3>
+                            to={`/receipt/${sale.id}`}
 
-                      <p className="text-slate-500 mt-2">
+                            className="text-cyan-400 hover:text-cyan-300 font-semibold text-sm"
 
-                        Try changing your filters or complete a new sale.
+                          >
 
-                      </p>
+                            {sale.receiptNumber}
 
-                    </div>
+                          </Link>
 
-                  </td>
-
-                </tr>
-
-              ) : (
-
-                filteredSales.map((sale) => {
-
-                  const paymentClass =
-                    sale.paymentMethod === "Cash"
-
-                      ? "bg-green-500/20 text-green-400"
-
-                      : "bg-cyan-500/20 text-cyan-400";
-
-                  return (
-
-                    <tr
-
-                      key={sale.id}
-
-                      className="border-t border-slate-800 hover:bg-slate-800/40 transition-all"
-
-                    >
-
-                      {/* Receipt */}
-
-                      <td className="p-5">
-
-                        <Link
-
-                          to={`/receipt/${sale.id}`}
-
-                          className="text-cyan-400 hover:text-cyan-300 font-semibold"
-
-                        >
-
-                          {sale.receiptNumber}
-
-                        </Link>
-
-                      </td>
-
-                      {/* Product */}
-
-                      <td className="p-5">
-
-                        <div>
-
-                          <h3 className="font-semibold">
-
-                            {sale.productName}
-
-                          </h3>
-
-                          <p className="text-xs text-slate-500">
+                          <p className="text-xs text-slate-500 mt-0.5">
 
                             Sale #{sale.id}
 
@@ -550,35 +655,9 @@ function SalesHistory() {
 
                         </div>
 
-                      </td>
-
-                      {/* Quantity */}
-
-                      <td className="p-5">
-
-                        {sale.quantity}
-
-                      </td>
-
-                      {/* Total */}
-
-                      <td className="p-5 font-semibold">
-
-                        $
-
-                        {Number(
-                          sale.totalAmount
-                        ).toFixed(2)}
-
-                      </td>
-
-                      {/* Payment */}
-
-                      <td className="p-5">
-
                         <span
 
-                          className={`px-3 py-1 rounded-full text-sm font-medium ${paymentClass}`}
+                          className={`px-2 py-1 rounded-full text-xs font-medium flex-shrink-0 ml-2 ${paymentClass}`}
 
                         >
 
@@ -586,31 +665,63 @@ function SalesHistory() {
 
                         </span>
 
-                      </td>
+                      </div>
 
-                      {/* Date */}
+                      <div>
 
-                      <td className="p-5 text-sm text-slate-400">
+                        <h3 className="font-semibold text-white text-sm truncate">
 
-                        {new Date(
-                          sale.createdAt
-                        ).toLocaleString()}
+                          {sale.productName}
 
-                      </td>
+                        </h3>
 
-                    </tr>
+                      </div>
 
-                  );
+                      <div className="flex items-center justify-between flex-wrap gap-2">
 
-                })
+                        <div className="flex items-center gap-3">
 
-              )}
+                          <span className="text-xs text-slate-400">
 
-            </tbody>
+                            Qty: <span className="font-semibold text-white">{sale.quantity}</span>
 
-          </table>
+                          </span>
 
-        </div>
+                          <span className="text-xs text-slate-400">
+
+                            Total: <span className="font-semibold text-green-400">
+
+                              ${Number(sale.totalAmount).toFixed(2)}
+
+                            </span>
+
+                          </span>
+
+                        </div>
+
+                        <span className="text-xs text-slate-500">
+
+                          {new Date(
+                            sale.createdAt
+                          ).toLocaleString()}
+
+                        </span>
+
+                      </div>
+
+                    </div>
+
+                  </div>
+
+                );
+
+              })}
+
+            </div>
+
+          </>
+
+        )}
 
       </div>
 

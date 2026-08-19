@@ -292,8 +292,8 @@ function Orders() {
 
   if (loading) {
     return (
-      <div className="min-h-full flex items-center justify-center">
-        <div className="text-slate-400 text-lg">
+      <div className="min-h-full flex items-center justify-center px-4">
+        <div className="text-slate-400 text-base sm:text-lg text-center">
           Loading ordering inventory...
         </div>
       </div>
@@ -305,29 +305,29 @@ function Orders() {
   // ==========================================
 
   return (
-    <div className="space-y-8">
+    <div className="min-w-0 px-4 sm:px-6 lg:px-8 py-4 sm:py-6 lg:py-8 max-w-full space-y-6 sm:space-y-8">
 
       {/* ====================================== */}
       {/* Header */}
       {/* ====================================== */}
 
-      <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
 
-        <div>
-          <h1 className="text-3xl font-bold text-white">
+        <div className="min-w-0">
+          <h1 className="text-2xl sm:text-3xl font-bold text-white truncate">
             Ordering
           </h1>
 
-          <p className="text-slate-400 mt-2">
+          <p className="text-slate-400 mt-1 sm:mt-2 text-sm sm:text-base">
             Plan your next inventory purchase.
           </p>
         </div>
 
         <button
           onClick={fetchProducts}
-          className="inline-flex items-center justify-center gap-2 px-5 py-3 rounded-xl bg-slate-800 border border-slate-700 hover:bg-slate-700 transition"
+          className="inline-flex items-center justify-center gap-2 px-4 sm:px-5 py-2.5 sm:py-3 rounded-xl bg-slate-800 border border-slate-700 hover:bg-slate-700 transition text-sm sm:text-base w-full sm:w-auto touch-manipulation"
         >
-          <FaSyncAlt />
+          <FaSyncAlt className="text-sm sm:text-base flex-shrink-0" />
           Refresh Inventory
         </button>
 
@@ -337,63 +337,63 @@ function Orders() {
       {/* Statistics */}
       {/* ====================================== */}
 
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
 
-        <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6">
+        <div className="bg-slate-900 border border-slate-800 rounded-2xl p-4 sm:p-6 min-w-0">
 
           <div className="flex items-center justify-between">
 
-            <div>
-              <p className="text-slate-400 text-sm">
+            <div className="min-w-0">
+              <p className="text-slate-400 text-xs sm:text-sm">
                 Products Needing Order
               </p>
 
-              <h2 className="text-3xl font-bold mt-1 text-red-400">
+              <h2 className="text-2xl sm:text-3xl font-bold mt-1 text-red-400 truncate">
                 {productsToOrder.length}
               </h2>
             </div>
 
-            <FaExclamationTriangle className="text-red-400 text-2xl" />
+            <FaExclamationTriangle className="text-red-400 text-xl sm:text-2xl flex-shrink-0 ml-2" />
 
           </div>
 
         </div>
 
-        <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6">
+        <div className="bg-slate-900 border border-slate-800 rounded-2xl p-4 sm:p-6 min-w-0">
 
           <div className="flex items-center justify-between">
 
-            <div>
-              <p className="text-slate-400 text-sm">
+            <div className="min-w-0">
+              <p className="text-slate-400 text-xs sm:text-sm">
                 Products In Order
               </p>
 
-              <h2 className="text-3xl font-bold mt-1 text-cyan-400">
+              <h2 className="text-2xl sm:text-3xl font-bold mt-1 text-cyan-400 truncate">
                 {orderStats.products}
               </h2>
             </div>
 
-            <FaClipboardList className="text-cyan-400 text-2xl" />
+            <FaClipboardList className="text-cyan-400 text-xl sm:text-2xl flex-shrink-0 ml-2" />
 
           </div>
 
         </div>
 
-        <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6">
+        <div className="bg-slate-900 border border-slate-800 rounded-2xl p-4 sm:p-6 min-w-0 sm:col-span-2 lg:col-span-1">
 
           <div className="flex items-center justify-between">
 
-            <div>
-              <p className="text-slate-400 text-sm">
+            <div className="min-w-0">
+              <p className="text-slate-400 text-xs sm:text-sm">
                 Units To Order
               </p>
 
-              <h2 className="text-3xl font-bold mt-1 text-green-400">
+              <h2 className="text-2xl sm:text-3xl font-bold mt-1 text-green-400 truncate">
                 {orderStats.units}
               </h2>
             </div>
 
-            <FaBoxes className="text-green-400 text-2xl" />
+            <FaBoxes className="text-green-400 text-xl sm:text-2xl flex-shrink-0 ml-2" />
 
           </div>
 
@@ -405,13 +405,13 @@ function Orders() {
       {/* Search + Category */}
       {/* ====================================== */}
 
-      <div className="bg-slate-900 border border-slate-800 rounded-2xl p-5">
+      <div className="bg-slate-900 border border-slate-800 rounded-2xl p-4 sm:p-5 min-w-0">
 
-        <div className="flex flex-col lg:flex-row gap-4">
+        <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
 
-          <div className="relative flex-1">
+          <div className="relative flex-1 min-w-0">
 
-            <FaSearch className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500" />
+            <FaSearch className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 pointer-events-none text-sm sm:text-base" />
 
             <input
               type="text"
@@ -422,7 +422,7 @@ function Orders() {
                 )
               }
               placeholder="Search products to order..."
-              className="w-full bg-slate-800 border border-slate-700 rounded-xl py-3 pl-11 pr-4 text-white outline-none focus:border-cyan-500"
+              className="w-full bg-slate-800 border border-slate-700 rounded-xl py-2.5 sm:py-3 pl-10 sm:pl-11 pr-4 text-white outline-none focus:border-cyan-500 text-sm sm:text-base min-w-0"
             />
 
           </div>
@@ -434,7 +434,7 @@ function Orders() {
                 event.target.value
               )
             }
-            className="bg-slate-800 border border-slate-700 rounded-xl px-4 py-3 text-white outline-none focus:border-cyan-500"
+            className="bg-slate-800 border border-slate-700 rounded-xl px-3 sm:px-4 py-2.5 sm:py-3 text-white outline-none focus:border-cyan-500 text-sm sm:text-base w-full sm:w-auto min-w-0 sm:min-w-[150px]"
           >
 
             {categories.map(
@@ -458,18 +458,18 @@ function Orders() {
       {/* Products Needing Order */}
       {/* ====================================== */}
 
-      <div className="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden">
+      <div className="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden min-w-0">
 
-        <div className="p-6 border-b border-slate-800">
+        <div className="p-4 sm:p-6 border-b border-slate-800">
 
-          <div className="flex items-center justify-between">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
 
-            <div>
-              <h2 className="text-xl font-bold">
+            <div className="min-w-0">
+              <h2 className="text-lg sm:text-xl font-bold">
                 Products Needing Order
               </h2>
 
-              <p className="text-slate-400 text-sm mt-1">
+              <p className="text-slate-400 text-xs sm:text-sm mt-1">
                 {filteredProducts.length} product(s)
                 require attention.
               </p>
@@ -481,15 +481,15 @@ function Orders() {
 
         {filteredProducts.length === 0 ? (
 
-          <div className="p-12 text-center">
+          <div className="p-8 sm:p-12 text-center">
 
-            <FaCheckCircle className="mx-auto text-5xl text-green-400 mb-4" />
+            <FaCheckCircle className="mx-auto text-4xl sm:text-5xl text-green-400 mb-3 sm:mb-4" />
 
-            <h3 className="text-lg font-semibold text-slate-300">
+            <h3 className="text-base sm:text-lg font-semibold text-slate-300">
               Inventory looks good
             </h3>
 
-            <p className="text-slate-500 mt-2">
+            <p className="text-slate-500 mt-1 sm:mt-2 text-sm sm:text-base">
               No products currently require ordering.
             </p>
 
@@ -497,110 +497,206 @@ function Orders() {
 
         ) : (
 
-          <div className="overflow-x-auto">
+          <>
+            {/* Desktop Table View - Hidden on mobile */}
+            <div className="hidden md:block overflow-x-auto">
+              <table className="w-full min-w-[700px]">
 
-            <table className="w-full">
+                <thead>
 
-              <thead>
+                  <tr className="text-left text-slate-400 text-xs sm:text-sm border-b border-slate-800">
 
-                <tr className="text-left text-slate-400 text-sm border-b border-slate-800">
+                    <th className="p-3 sm:p-4 whitespace-nowrap">
+                      Product
+                    </th>
 
-                  <th className="p-4">
-                    Product
-                  </th>
+                    <th className="p-3 sm:p-4 whitespace-nowrap">
+                      Category
+                    </th>
 
-                  <th className="p-4">
-                    Category
-                  </th>
+                    <th className="p-3 sm:p-4 whitespace-nowrap">
+                      Current Stock
+                    </th>
 
-                  <th className="p-4">
-                    Current Stock
-                  </th>
+                    <th className="p-3 sm:p-4 whitespace-nowrap">
+                      Priority
+                    </th>
 
-                  <th className="p-4">
-                    Priority
-                  </th>
+                    <th className="p-3 sm:p-4 whitespace-nowrap">
+                      Recommended
+                    </th>
 
-                  <th className="p-4">
-                    Recommended
-                  </th>
+                    <th className="p-3 sm:p-4 text-right whitespace-nowrap">
+                      Action
+                    </th>
 
-                  <th className="p-4 text-right">
-                    Action
-                  </th>
+                  </tr>
 
-                </tr>
+                </thead>
 
-              </thead>
+                <tbody>
 
-              <tbody>
+                  {filteredProducts.map(
+                    (product) => {
 
-                {filteredProducts.map(
-                  (product) => {
+                      const stock =
+                        Number(
+                          product.stock ?? 0
+                        );
 
-                    const stock =
-                      Number(
-                        product.stock ?? 0
+                      const recommended =
+                        getRecommendedQuantity(
+                          product
+                        );
+
+                      const alreadyAdded =
+                        orderItems.some(
+                          (item) =>
+                            item.id ===
+                            product.id
+                        );
+
+                      const priority =
+                        stock === 0
+                          ? "URGENT"
+                          : "LOW STOCK";
+
+                      return (
+                        <tr
+                          key={product.id}
+                          className="border-b border-slate-800 last:border-0 hover:bg-slate-800/50 transition"
+                        >
+
+                          <td className="p-3 sm:p-4">
+
+                            <div className="font-semibold text-white text-sm sm:text-base truncate max-w-[150px] sm:max-w-[200px]">
+                              {product.name}
+                            </div>
+
+                          </td>
+
+                          <td className="p-3 sm:p-4 text-slate-400 text-sm sm:text-base">
+                            {product.category ||
+                              "Uncategorized"}
+                          </td>
+
+                          <td className="p-3 sm:p-4">
+
+                            <span
+                              className={`font-bold text-sm sm:text-base ${
+                                stock === 0
+                                  ? "text-red-400"
+                                  : "text-yellow-400"
+                              }`}
+                            >
+                              {stock}
+                            </span>
+
+                            <span className="text-slate-500 ml-1 text-xs sm:text-sm">
+                              units
+                            </span>
+
+                          </td>
+
+                          <td className="p-3 sm:p-4">
+
+                            <span
+                              className={`px-2 sm:px-3 py-1 rounded-full text-xs font-bold whitespace-nowrap ${
+                                stock === 0
+                                  ? "bg-red-500/20 text-red-400"
+                                  : "bg-yellow-500/20 text-yellow-400"
+                              }`}
+                            >
+                              {priority}
+                            </span>
+
+                          </td>
+
+                          <td className="p-3 sm:p-4">
+
+                            <span className="font-bold text-cyan-400 text-sm sm:text-base">
+                              {recommended}
+                            </span>
+
+                            <span className="text-slate-500 ml-1 text-xs sm:text-sm">
+                              units
+                            </span>
+
+                          </td>
+
+                          <td className="p-3 sm:p-4 text-right">
+
+                            <button
+                              onClick={() =>
+                                addToOrder(
+                                  product
+                                )
+                              }
+                              className={`inline-flex items-center gap-1 sm:gap-2 px-3 sm:px-4 py-2 rounded-xl font-semibold transition text-sm sm:text-base touch-manipulation ${
+                                alreadyAdded
+                                  ? "bg-green-500/20 text-green-400"
+                                  : "bg-cyan-500 text-black hover:bg-cyan-400"
+                              }`}
+                            >
+
+                              {alreadyAdded ? (
+                                <>
+                                  <FaCheckCircle className="text-sm sm:text-base" />
+                                  <span className="hidden sm:inline">Added</span>
+                                </>
+                              ) : (
+                                <>
+                                  <FaPlus className="text-sm sm:text-base" />
+                                  <span className="hidden sm:inline">Add To Order</span>
+                                  <span className="sm:hidden">Add</span>
+                                </>
+                              )}
+
+                            </button>
+
+                          </td>
+
+                        </tr>
                       );
+                    }
+                  )}
 
-                    const recommended =
-                      getRecommendedQuantity(
-                        product
-                      );
+                </tbody>
 
-                    const alreadyAdded =
-                      orderItems.some(
-                        (item) =>
-                          item.id ===
-                          product.id
-                      );
+              </table>
+            </div>
 
-                    const priority =
-                      stock === 0
-                        ? "URGENT"
-                        : "LOW STOCK";
+            {/* Mobile Card View - Visible only on phones/tablets */}
+            <div className="md:hidden">
+              {filteredProducts.map((product) => {
+                const stock = Number(product.stock ?? 0);
+                const recommended = getRecommendedQuantity(product);
+                const alreadyAdded = orderItems.some(
+                  (item) => item.id === product.id
+                );
+                const priority = stock === 0 ? "URGENT" : "LOW STOCK";
 
-                    return (
-                      <tr
-                        key={product.id}
-                        className="border-b border-slate-800 last:border-0 hover:bg-slate-800/50 transition"
-                      >
-
-                        <td className="p-4">
-
-                          <div className="font-semibold text-white">
-                            {product.name}
-                          </div>
-
-                        </td>
-
-                        <td className="p-4 text-slate-400">
-                          {product.category ||
-                            "Uncategorized"}
-                        </td>
-
-                        <td className="p-4">
-
-                          <span
-                            className={`font-bold ${
-                              stock === 0
-                                ? "text-red-400"
-                                : "text-yellow-400"
-                            }`}
-                          >
-                            {stock}
+                return (
+                  <div
+                    key={product.id}
+                    className="border-b border-slate-800 last:border-0 p-4 hover:bg-slate-800/30 transition"
+                  >
+                    <div className="flex items-start justify-between gap-3">
+                      <div className="min-w-0 flex-1">
+                        <h3 className="font-semibold text-white text-sm truncate">
+                          {product.name}
+                        </h3>
+                        <p className="text-xs text-slate-400 mt-1 truncate">
+                          {product.category || "Uncategorized"}
+                        </p>
+                        <div className="flex items-center gap-3 mt-2 flex-wrap">
+                          <span className="text-xs text-slate-400">
+                            Stock: <span className={`font-bold ${stock === 0 ? "text-red-400" : "text-yellow-400"}`}>
+                              {stock}
+                            </span>
                           </span>
-
-                          <span className="text-slate-500 ml-1">
-                            units
-                          </span>
-
-                        </td>
-
-                        <td className="p-4">
-
                           <span
-                            className={`px-3 py-1 rounded-full text-xs font-bold ${
+                            className={`px-2 py-0.5 rounded-full text-xs font-bold ${
                               stock === 0
                                 ? "bg-red-500/20 text-red-400"
                                 : "bg-yellow-500/20 text-yellow-400"
@@ -608,62 +704,37 @@ function Orders() {
                           >
                             {priority}
                           </span>
-
-                        </td>
-
-                        <td className="p-4">
-
-                          <span className="font-bold text-cyan-400">
-                            {recommended}
+                          <span className="text-xs text-cyan-400">
+                            Recommend: {recommended}
                           </span>
-
-                          <span className="text-slate-500 ml-1">
-                            units
-                          </span>
-
-                        </td>
-
-                        <td className="p-4 text-right">
-
-                          <button
-                            onClick={() =>
-                              addToOrder(
-                                product
-                              )
-                            }
-                            className={`inline-flex items-center gap-2 px-4 py-2 rounded-xl font-semibold transition ${
-                              alreadyAdded
-                                ? "bg-green-500/20 text-green-400"
-                                : "bg-cyan-500 text-black hover:bg-cyan-400"
-                            }`}
-                          >
-
-                            {alreadyAdded ? (
-                              <>
-                                <FaCheckCircle />
-                                Added
-                              </>
-                            ) : (
-                              <>
-                                <FaPlus />
-                                Add To Order
-                              </>
-                            )}
-
-                          </button>
-
-                        </td>
-
-                      </tr>
-                    );
-                  }
-                )}
-
-              </tbody>
-
-            </table>
-
-          </div>
+                        </div>
+                      </div>
+                      <button
+                        onClick={() => addToOrder(product)}
+                        className={`flex-shrink-0 inline-flex items-center gap-1 px-3 py-2 rounded-xl font-semibold transition text-sm touch-manipulation ${
+                          alreadyAdded
+                            ? "bg-green-500/20 text-green-400"
+                            : "bg-cyan-500 text-black hover:bg-cyan-400"
+                        }`}
+                      >
+                        {alreadyAdded ? (
+                          <>
+                            <FaCheckCircle />
+                            <span>Added</span>
+                          </>
+                        ) : (
+                          <>
+                            <FaPlus />
+                            <span>Add</span>
+                          </>
+                        )}
+                      </button>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </>
 
         )}
 
@@ -673,18 +744,18 @@ function Orders() {
       {/* Current Order */}
       {/* ====================================== */}
 
-      <div className="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden">
+      <div className="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden min-w-0">
 
-        <div className="p-6 border-b border-slate-800 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <div className="p-4 sm:p-6 border-b border-slate-800 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-4">
 
-          <div>
+          <div className="min-w-0">
 
-            <h2 className="text-xl font-bold flex items-center gap-3">
-              <FaShoppingCart className="text-cyan-400" />
-              Current Order
+            <h2 className="text-lg sm:text-xl font-bold flex items-center gap-2 sm:gap-3">
+              <FaShoppingCart className="text-cyan-400 flex-shrink-0" />
+              <span className="truncate">Current Order</span>
             </h2>
 
-            <p className="text-slate-400 text-sm mt-1">
+            <p className="text-slate-400 text-xs sm:text-sm mt-1">
               Products selected for your next purchase.
             </p>
 
@@ -693,9 +764,9 @@ function Orders() {
           {orderItems.length > 0 && (
             <button
               onClick={clearOrder}
-              className="inline-flex items-center justify-center gap-2 px-4 py-2 rounded-xl bg-red-500/20 text-red-400 hover:bg-red-500/30 transition"
+              className="inline-flex items-center justify-center gap-2 px-3 sm:px-4 py-2 rounded-xl bg-red-500/20 text-red-400 hover:bg-red-500/30 transition text-sm sm:text-base w-full sm:w-auto touch-manipulation"
             >
-              <FaTrash />
+              <FaTrash className="text-sm sm:text-base" />
               Clear Order
             </button>
           )}
@@ -704,15 +775,15 @@ function Orders() {
 
         {orderItems.length === 0 ? (
 
-          <div className="p-12 text-center">
+          <div className="p-8 sm:p-12 text-center">
 
-            <FaShoppingCart className="mx-auto text-5xl text-slate-600 mb-4" />
+            <FaShoppingCart className="mx-auto text-4xl sm:text-5xl text-slate-600 mb-3 sm:mb-4" />
 
-            <h3 className="text-lg font-semibold text-slate-300">
+            <h3 className="text-base sm:text-lg font-semibold text-slate-300">
               Your order is empty
             </h3>
 
-            <p className="text-slate-500 mt-2">
+            <p className="text-slate-500 mt-1 sm:mt-2 text-sm sm:text-base">
               Add products from the list above.
             </p>
 
@@ -720,7 +791,7 @@ function Orders() {
 
         ) : (
 
-          <div className="p-6 space-y-4">
+          <div className="p-4 sm:p-6 space-y-3 sm:space-y-4">
 
             {orderItems.map(
               (item) => (
@@ -728,22 +799,22 @@ function Orders() {
                 <motion.div
                   key={item.id}
                   layout
-                  className="bg-slate-800 rounded-xl p-4 flex flex-col lg:flex-row lg:items-center gap-4"
+                  className="bg-slate-800 rounded-xl p-4 flex flex-col sm:flex-row sm:items-center gap-4"
                 >
 
-                  <div className="flex-1">
+                  <div className="flex-1 min-w-0">
 
-                    <h3 className="font-semibold text-white">
+                    <h3 className="font-semibold text-white text-sm sm:text-base truncate">
                       {item.name}
                     </h3>
 
-                    <p className="text-sm text-slate-400 mt-1">
+                    <p className="text-xs sm:text-sm text-slate-400 mt-1 truncate">
                       {item.category}
                     </p>
 
                   </div>
 
-                  <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-2 flex-wrap sm:flex-nowrap">
 
                     <button
                       onClick={() =>
@@ -751,12 +822,12 @@ function Orders() {
                           item.id
                         )
                       }
-                      className="w-9 h-9 rounded-lg bg-slate-700 hover:bg-slate-600 flex items-center justify-center"
+                      className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-slate-700 hover:bg-slate-600 flex items-center justify-center text-sm sm:text-base touch-manipulation flex-shrink-0"
                     >
                       <FaMinus />
                     </button>
 
-                    <div className="w-16 text-center font-bold">
+                    <div className="w-12 sm:w-16 text-center font-bold text-sm sm:text-base">
                       {item.quantity}
                     </div>
 
@@ -766,20 +837,20 @@ function Orders() {
                           item.id
                         )
                       }
-                      className="w-9 h-9 rounded-lg bg-cyan-500 text-black hover:bg-cyan-400 flex items-center justify-center"
+                      className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-cyan-500 text-black hover:bg-cyan-400 flex items-center justify-center text-sm sm:text-base touch-manipulation flex-shrink-0"
                     >
                       <FaPlus />
                     </button>
 
                   </div>
 
-                  <div className="text-right min-w-[120px]">
+                  <div className="text-right min-w-[80px] sm:min-w-[120px]">
 
                     <p className="text-xs text-slate-500">
-                      Estimated Cost
+                      Est. Cost
                     </p>
 
-                    <p className="font-bold text-green-400">
+                    <p className="font-bold text-green-400 text-sm sm:text-base">
                       $
                       {(
                         item.quantity *
@@ -795,10 +866,10 @@ function Orders() {
                         item.id
                       )
                     }
-                    className="p-3 rounded-lg text-red-400 hover:bg-red-500/10"
+                    className="p-2 sm:p-3 rounded-lg text-red-400 hover:bg-red-500/10 touch-manipulation flex-shrink-0"
                     title="Remove"
                   >
-                    <FaTrash />
+                    <FaTrash className="text-sm sm:text-base" />
                   </button>
 
                 </motion.div>
@@ -808,41 +879,41 @@ function Orders() {
 
             {/* Order Summary */}
 
-            <div className="border-t border-slate-700 pt-6 mt-6">
+            <div className="border-t border-slate-700 pt-4 sm:pt-6 mt-4 sm:mt-6">
 
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
 
-                <div className="bg-slate-800 rounded-xl p-4">
+                <div className="bg-slate-800 rounded-xl p-3 sm:p-4 min-w-0">
 
-                  <p className="text-slate-400 text-sm">
+                  <p className="text-slate-400 text-xs sm:text-sm">
                     Products
                   </p>
 
-                  <p className="text-2xl font-bold mt-1">
+                  <p className="text-xl sm:text-2xl font-bold mt-1 truncate">
                     {orderStats.products}
                   </p>
 
                 </div>
 
-                <div className="bg-slate-800 rounded-xl p-4">
+                <div className="bg-slate-800 rounded-xl p-3 sm:p-4 min-w-0">
 
-                  <p className="text-slate-400 text-sm">
+                  <p className="text-slate-400 text-xs sm:text-sm">
                     Total Units
                   </p>
 
-                  <p className="text-2xl font-bold mt-1 text-cyan-400">
+                  <p className="text-xl sm:text-2xl font-bold mt-1 text-cyan-400 truncate">
                     {orderStats.units}
                   </p>
 
                 </div>
 
-                <div className="bg-slate-800 rounded-xl p-4">
+                <div className="bg-slate-800 rounded-xl p-3 sm:p-4 min-w-0 sm:col-span-2 lg:col-span-1">
 
-                  <p className="text-slate-400 text-sm">
+                  <p className="text-slate-400 text-xs sm:text-sm">
                     Estimated Cost
                   </p>
 
-                  <p className="text-2xl font-bold mt-1 text-green-400">
+                  <p className="text-xl sm:text-2xl font-bold mt-1 text-green-400 truncate">
                     $
                     {orderStats.estimatedCost.toFixed(
                       2

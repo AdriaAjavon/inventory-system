@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo, useCallback } from "react";
 
 import {
   FaTrash,
@@ -350,6 +350,7 @@ const [selectedProduct, setSelectedProduct] =
       ) {
 
         const proceed =
+
           window.confirm(
 
 `This product is still using Opening Stock.
@@ -443,7 +444,7 @@ const handleViewProduct = (
   // Categories
   //--------------------------------------------------
 
-  const categories = [
+  const categories = useMemo(() => [
 
     "All",
 
@@ -458,13 +459,13 @@ const handleViewProduct = (
 
     ),
 
-  ];
+  ], [products]);
 
   //--------------------------------------------------
   // Inventory Statistics
   //--------------------------------------------------
 
-  const inventoryValue =
+  const inventoryValue = useMemo(() =>
     products.reduce(
 
       (sum, product) =>
@@ -475,12 +476,12 @@ const handleViewProduct = (
 
       0
 
-    );
+    ), [products]);
 
-  const totalProducts =
-    products.length;
+  const totalProducts = useMemo(() =>
+    products.length, [products]);
 
-  const lowStockProducts =
+  const lowStockProducts = useMemo(() =>
     products.filter(
 
       (product) =>
@@ -488,17 +489,17 @@ const handleViewProduct = (
         product.stock > 0 &&
         product.stock <= 10
 
-    ).length;
+    ).length, [products]);
 
-  const outOfStockProducts =
+  const outOfStockProducts = useMemo(() =>
     products.filter(
 
       (product) =>
         product.stock === 0
 
-    ).length;
+    ).length, [products]);
 
-  const categoryCount =
+  const categoryCount = useMemo(() =>
     new Set(
 
       products.map(
@@ -508,13 +509,14 @@ const handleViewProduct = (
 
       )
 
-    ).size;
+    ).size, [products]);
 
   //--------------------------------------------------
   // Filter Products
   //--------------------------------------------------
 
-  const filteredProducts = products.filter(
+  const filteredProducts = useMemo(() => 
+    products.filter(
     (product) => {
 
       const matchesSearch =
@@ -561,7 +563,7 @@ const handleViewProduct = (
       );
 
     }
-  );
+  ), [products, search, categoryFilter, statusFilter]);
 
   //--------------------------------------------------
   // UI
@@ -569,21 +571,21 @@ const handleViewProduct = (
 
   return (
 
-    <div>
+    <div className="min-w-0 px-4 sm:px-6 lg:px-8 py-4 sm:py-6 lg:py-8 max-w-full">
 
       {/* =======================================
           Header
       ======================================= */}
 
-      <div className="flex items-center justify-between mb-8">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6 sm:mb-8">
 
-        <div>
+        <div className="min-w-0">
 
-          <h1 className="text-4xl font-bold text-white">
+          <h1 className="text-3xl sm:text-4xl font-bold text-white truncate">
             Products
           </h1>
 
-          <p className="text-slate-400 mt-2">
+          <p className="text-slate-400 mt-1 sm:mt-2 text-sm sm:text-base">
             Manage your inventory products
           </p>
 
@@ -593,7 +595,7 @@ const handleViewProduct = (
           onClick={() =>
             setIsOpen(true)
           }
-          className="bg-cyan-500 hover:bg-cyan-400 transition px-6 py-3 rounded-xl text-black font-semibold"
+          className="bg-cyan-500 hover:bg-cyan-400 transition px-4 sm:px-6 py-2.5 sm:py-3 rounded-xl text-black font-semibold text-sm sm:text-base w-full sm:w-auto whitespace-nowrap touch-manipulation"
         >
           + Add Product
         </button>
@@ -604,16 +606,17 @@ const handleViewProduct = (
           Search + Filters
       ======================================= */}
 
-      <div className="bg-slate-900 border border-slate-800 rounded-2xl p-5 mb-8">
+      <div className="bg-slate-900 border border-slate-800 rounded-2xl p-4 sm:p-5 mb-6 sm:mb-8">
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
 
           {/* Search */}
 
-          <div className="relative">
+          <div className="relative min-w-0">
 
             <FaSearch
-              className="absolute left-4 top-4 text-slate-500"
+              className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 pointer-events-none"
+              size={16}
             />
 
             <input
@@ -625,7 +628,7 @@ const handleViewProduct = (
                   e.target.value
                 )
               }
-              className="w-full bg-slate-800 border border-slate-700 rounded-xl py-3 pl-11 pr-4 outline-none focus:border-cyan-500"
+              className="w-full bg-slate-800 border border-slate-700 rounded-xl py-2.5 sm:py-3 pl-10 pr-4 outline-none focus:border-cyan-500 text-sm sm:text-base min-w-0"
             />
 
           </div>
@@ -639,7 +642,7 @@ const handleViewProduct = (
                 e.target.value
               )
             }
-            className="bg-slate-800 border border-slate-700 rounded-xl px-4 py-3"
+            className="bg-slate-800 border border-slate-700 rounded-xl px-3 sm:px-4 py-2.5 sm:py-3 text-sm sm:text-base w-full min-w-0"
           >
 
             {categories.map(
@@ -666,7 +669,7 @@ const handleViewProduct = (
                 e.target.value
               )
             }
-            className="bg-slate-800 border border-slate-700 rounded-xl px-4 py-3"
+            className="bg-slate-800 border border-slate-700 rounded-xl px-3 sm:px-4 py-2.5 sm:py-3 text-sm sm:text-base w-full min-w-0"
           >
 
             <option>All</option>
@@ -684,29 +687,29 @@ const handleViewProduct = (
           Statistics
       ======================================= */}
 
-      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-5 gap-5 mb-8">
+      <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-5 gap-3 sm:gap-4 lg:gap-5 mb-6 sm:mb-8">
 
         {/* Products */}
 
-        <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6">
+        <div className="bg-slate-900 border border-slate-800 rounded-2xl p-4 sm:p-5 lg:p-6 min-w-0">
 
           <div className="flex items-center justify-between">
 
-            <div>
+            <div className="min-w-0">
 
-              <p className="text-slate-400">
+              <p className="text-slate-400 text-xs sm:text-sm">
                 Products
               </p>
 
-              <h2 className="text-3xl font-bold mt-2">
+              <h2 className="text-2xl sm:text-3xl font-bold mt-1 sm:mt-2 truncate">
                 {totalProducts}
               </h2>
 
             </div>
 
             <FaBoxes
-              size={28}
-              className="text-cyan-400"
+              size={24}
+              className="text-cyan-400 flex-shrink-0 ml-2"
             />
 
           </div>
@@ -715,17 +718,17 @@ const handleViewProduct = (
 
         {/* Inventory Value */}
 
-        <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6">
+        <div className="bg-slate-900 border border-slate-800 rounded-2xl p-4 sm:p-5 lg:p-6 min-w-0">
 
           <div className="flex items-center justify-between">
 
-            <div>
+            <div className="min-w-0">
 
-              <p className="text-slate-400">
+              <p className="text-slate-400 text-xs sm:text-sm">
                 Inventory Value
               </p>
 
-              <h2 className="text-3xl font-bold mt-2">
+              <h2 className="text-2xl sm:text-3xl font-bold mt-1 sm:mt-2 truncate">
                 $
                 {inventoryValue.toFixed(
                   2
@@ -735,8 +738,8 @@ const handleViewProduct = (
             </div>
 
             <FaDollarSign
-              size={28}
-              className="text-green-400"
+              size={24}
+              className="text-green-400 flex-shrink-0 ml-2"
             />
 
           </div>
@@ -745,25 +748,25 @@ const handleViewProduct = (
 
         {/* Low Stock */}
 
-        <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6">
+        <div className="bg-slate-900 border border-slate-800 rounded-2xl p-4 sm:p-5 lg:p-6 min-w-0">
 
           <div className="flex items-center justify-between">
 
-            <div>
+            <div className="min-w-0">
 
-              <p className="text-slate-400">
+              <p className="text-slate-400 text-xs sm:text-sm">
                 Low Stock
               </p>
 
-              <h2 className="text-3xl font-bold mt-2">
+              <h2 className="text-2xl sm:text-3xl font-bold mt-1 sm:mt-2 truncate">
                 {lowStockProducts}
               </h2>
 
             </div>
 
             <FaExclamationTriangle
-              size={28}
-              className="text-yellow-400"
+              size={24}
+              className="text-yellow-400 flex-shrink-0 ml-2"
             />
 
           </div>
@@ -772,25 +775,25 @@ const handleViewProduct = (
 
         {/* Out of Stock */}
 
-        <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6">
+        <div className="bg-slate-900 border border-slate-800 rounded-2xl p-4 sm:p-5 lg:p-6 min-w-0">
 
           <div className="flex items-center justify-between">
 
-            <div>
+            <div className="min-w-0">
 
-              <p className="text-slate-400">
+              <p className="text-slate-400 text-xs sm:text-sm">
                 Out of Stock
               </p>
 
-              <h2 className="text-3xl font-bold mt-2">
+              <h2 className="text-2xl sm:text-3xl font-bold mt-1 sm:mt-2 truncate">
                 {outOfStockProducts}
               </h2>
 
             </div>
 
             <FaExclamationTriangle
-              size={28}
-              className="text-red-400"
+              size={24}
+              className="text-red-400 flex-shrink-0 ml-2"
             />
 
           </div>
@@ -799,25 +802,25 @@ const handleViewProduct = (
 
         {/* Categories */}
 
-        <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6">
+        <div className="bg-slate-900 border border-slate-800 rounded-2xl p-4 sm:p-5 lg:p-6 min-w-0">
 
           <div className="flex items-center justify-between">
 
-            <div>
+            <div className="min-w-0">
 
-              <p className="text-slate-400">
+              <p className="text-slate-400 text-xs sm:text-sm">
                 Categories
               </p>
 
-              <h2 className="text-3xl font-bold mt-2">
+              <h2 className="text-2xl sm:text-3xl font-bold mt-1 sm:mt-2 truncate">
                 {categoryCount}
               </h2>
 
             </div>
 
             <FaTags
-              size={28}
-              className="text-pink-400"
+              size={24}
+              className="text-pink-400 flex-shrink-0 ml-2"
             />
 
           </div>
@@ -830,37 +833,37 @@ const handleViewProduct = (
           Products Table
       ======================================= */}
 
-      <div className="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden">
+      <div className="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden min-w-0">
 
         <div className="overflow-x-auto">
 
-          <table className="w-full">
+          <table className="w-full min-w-[640px] sm:min-w-full">
 
             <thead className="bg-slate-950">
 
-              <tr className="text-left text-slate-400">
+              <tr className="text-left text-slate-400 text-xs sm:text-sm">
 
-                <th className="p-5">
+                <th className="p-3 sm:p-4 lg:p-5 whitespace-nowrap">
                   Product
                 </th>
 
-                <th className="p-5">
+                <th className="p-3 sm:p-4 lg:p-5 whitespace-nowrap hidden sm:table-cell">
                   Category
                 </th>
 
-                <th className="p-5">
+                <th className="p-3 sm:p-4 lg:p-5 whitespace-nowrap">
                   Stock
                 </th>
 
-                <th className="p-5">
+                <th className="p-3 sm:p-4 lg:p-5 whitespace-nowrap">
                   Price
                 </th>
 
-                <th className="p-5">
+                <th className="p-3 sm:p-4 lg:p-5 whitespace-nowrap hidden md:table-cell">
                   Status
                 </th>
 
-                <th className="p-5 text-center">
+                <th className="p-3 sm:p-4 lg:p-5 text-center whitespace-nowrap">
                   Actions
                 </th>
 
@@ -876,23 +879,23 @@ const handleViewProduct = (
 
                   <td
                     colSpan={6}
-                    className="text-center py-16"
+                    className="text-center py-12 sm:py-16"
                   >
 
-                    <div className="flex flex-col items-center">
+                    <div className="flex flex-col items-center px-4">
 
                       <FaBoxes
-                        size={45}
-                        className="text-slate-600 mb-4"
+                        size={36}
+                        className="text-slate-600 mb-3 sm:mb-4"
                       />
 
-                      <h3 className="text-xl font-semibold text-white">
+                      <h3 className="text-lg sm:text-xl font-semibold text-white">
 
                         No Products Found
 
                       </h3>
 
-                      <p className="text-slate-500 mt-2">
+                      <p className="text-slate-500 mt-1 sm:mt-2 text-sm sm:text-base">
 
                         Try changing your filters or add a new product.
 
@@ -946,32 +949,32 @@ const handleViewProduct = (
 
                       {/* Product */}
 
-                      <td className="p-5">
+                      <td className="p-3 sm:p-4 lg:p-5">
 
-                        <div className="flex items-center gap-3">
+                        <div className="flex items-center gap-2 sm:gap-3 min-w-0">
 
-                          <div className="w-12 h-12 rounded-xl bg-cyan-500/10 flex items-center justify-center">
+                          <div className="w-8 h-8 sm:w-10 sm:h-10 lg:w-12 lg:h-12 rounded-xl bg-cyan-500/10 flex items-center justify-center flex-shrink-0">
 
                             <FaBoxes
-                              className="text-cyan-400"
+                              className="text-cyan-400 text-sm sm:text-base"
                             />
 
                           </div>
 
-                          <div>
+                          <div className="min-w-0">
 
                             <h3
                               onClick={() =>
                                 handleViewProduct(product)
                               }
-                              className="font-semibold text-white cursor-pointer hover:text-cyan-400 transition"
+                              className="font-semibold text-white cursor-pointer hover:text-cyan-400 transition text-sm sm:text-base truncate"
                             >
 
                               {product.name}
 
                             </h3>
 
-                            <p className="text-xs text-slate-500">
+                            <p className="text-xs text-slate-500 truncate">
 
                               ID #{product.id}
 
@@ -985,7 +988,7 @@ const handleViewProduct = (
 
                       {/* Category */}
 
-                      <td className="p-5">
+                      <td className="p-3 sm:p-4 lg:p-5 text-sm sm:text-base hidden sm:table-cell">
 
                         {product.category}
 
@@ -993,7 +996,7 @@ const handleViewProduct = (
 
                       {/* Stock */}
 
-                      <td className="p-5 font-semibold">
+                      <td className="p-3 sm:p-4 lg:p-5 font-semibold text-sm sm:text-base">
 
                         {product.stock}
 
@@ -1001,7 +1004,7 @@ const handleViewProduct = (
 
                       {/* Price */}
 
-                      <td className="p-5 font-semibold">
+                      <td className="p-3 sm:p-4 lg:p-5 font-semibold text-sm sm:text-base">
 
                         $
                         {product.price.toFixed(2)}
@@ -1010,10 +1013,10 @@ const handleViewProduct = (
 
                       {/* Status */}
 
-                      <td className="p-5">
+                      <td className="p-3 sm:p-4 lg:p-5 hidden md:table-cell">
 
                         <span
-                          className={`px-3 py-1 rounded-full text-sm font-medium ${statusClass}`}
+                          className={`px-2 py-1 sm:px-3 sm:py-1 rounded-full text-xs sm:text-sm font-medium ${statusClass} whitespace-nowrap`}
                         >
 
                           {status}
@@ -1024,9 +1027,9 @@ const handleViewProduct = (
 
                       {/* Actions */}
 
-                      <td className="p-5">
+                      <td className="p-3 sm:p-4 lg:p-5">
 
-                        <div className="flex items-center justify-center gap-4">
+                        <div className="flex items-center justify-center gap-2 sm:gap-3 lg:gap-4">
 
                           <button
                             onClick={() => {
@@ -1034,11 +1037,11 @@ const handleViewProduct = (
                               setReceiveQuantity("");
                               setIsReceiveOpen(true);
                             }}
-                            className="text-green-400 hover:text-green-300 transition"
+                            className="text-green-400 hover:text-green-300 transition p-1.5 sm:p-2 touch-manipulation"
                             title="Receive Supplier Delivery"
                           >
 
-                            <FaTruckLoading />
+                            <FaTruckLoading size={16} className="sm:text-base lg:text-lg" />
 
                           </button>
 
@@ -1046,10 +1049,10 @@ const handleViewProduct = (
                             onClick={() =>
                               handleEditProduct(product)
                             }
-                            className="text-cyan-400 hover:text-cyan-300 transition"
+                            className="text-cyan-400 hover:text-cyan-300 transition p-1.5 sm:p-2 touch-manipulation"
                           >
 
-                            <FaEdit />
+                            <FaEdit size={16} className="sm:text-base lg:text-lg" />
 
                           </button>
 
@@ -1060,10 +1063,10 @@ const handleViewProduct = (
                                 product.name
                               )
                             }
-                            className="text-red-400 hover:text-red-300 transition"
+                            className="text-red-400 hover:text-red-300 transition p-1.5 sm:p-2 touch-manipulation"
                           >
 
-                            <FaTrash />
+                            <FaTrash size={16} className="sm:text-base lg:text-lg" />
 
                           </button>
 
@@ -1130,7 +1133,7 @@ const handleViewProduct = (
 
       {isReceiveOpen && receiveProduct && (
         <div
-          className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4"
+          className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-3 sm:p-4"
           onClick={(e) => {
             if (e.target === e.currentTarget) {
               setIsReceiveOpen(false);
@@ -1139,16 +1142,16 @@ const handleViewProduct = (
             }
           }}
         >
-          <div className="bg-slate-900 border border-slate-800 rounded-2xl p-8 max-w-md w-full">
-            <h2 className="text-2xl font-bold text-white mb-2">
+          <div className="bg-slate-900 border border-slate-800 rounded-2xl p-5 sm:p-6 md:p-8 max-w-md w-full max-h-[90vh] overflow-y-auto">
+            <h2 className="text-xl sm:text-2xl font-bold text-white mb-2">
               Receive Supplier Delivery
             </h2>
-            <p className="text-slate-400 mb-6">
+            <p className="text-slate-400 mb-4 sm:mb-6 text-sm sm:text-base">
               {receiveProduct.name} - Current Quantity: {receiveProduct.stock}
             </p>
             
-            <div className="mb-6">
-              <label className="block text-slate-400 mb-2">
+            <div className="mb-4 sm:mb-6">
+              <label className="block text-slate-400 mb-2 text-sm sm:text-base">
                 Quantity to Receive
               </label>
               <input
@@ -1156,15 +1159,15 @@ const handleViewProduct = (
                 min="1"
                 value={receiveQuantity}
                 onChange={(e) => setReceiveQuantity(e.target.value)}
-                className="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-3 outline-none focus:border-cyan-500"
+                className="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-3 outline-none focus:border-cyan-500 text-sm sm:text-base"
                 placeholder="Enter quantity..."
               />
             </div>
 
-            <div className="flex gap-3">
+            <div className="flex flex-col sm:flex-row gap-3">
               <button
                 onClick={handleReceiveStock}
-                className="flex-1 bg-green-500 hover:bg-green-400 transition px-6 py-3 rounded-xl text-black font-semibold"
+                className="flex-1 bg-green-500 hover:bg-green-400 transition px-4 sm:px-6 py-3 rounded-xl text-black font-semibold text-sm sm:text-base touch-manipulation"
               >
                 Confirm Receive
               </button>
@@ -1174,7 +1177,7 @@ const handleViewProduct = (
                   setReceiveProduct(null);
                   setReceiveQuantity("");
                 }}
-                className="flex-1 bg-slate-800 hover:bg-slate-700 transition px-6 py-3 rounded-xl text-white font-semibold"
+                className="flex-1 bg-slate-800 hover:bg-slate-700 transition px-4 sm:px-6 py-3 rounded-xl text-white font-semibold text-sm sm:text-base touch-manipulation"
               >
                 Cancel
               </button>

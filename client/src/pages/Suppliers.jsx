@@ -291,8 +291,8 @@ function Suppliers() {
 
   if (loading) {
     return (
-      <div className="min-h-full flex items-center justify-center">
-        <div className="text-slate-400 text-lg">
+      <div className="min-h-full flex items-center justify-center px-4">
+        <div className="text-slate-400 text-base sm:text-lg text-center">
           Loading supply inventory...
         </div>
       </div>
@@ -304,18 +304,18 @@ function Suppliers() {
   // ==========================================
 
   return (
-    <div className="space-y-8">
+    <div className="min-w-0 px-4 sm:px-6 lg:px-8 py-4 sm:py-6 lg:py-8 max-w-full space-y-6 sm:space-y-8">
 
       {/* ====================================== */}
       {/* Header */}
       {/* ====================================== */}
 
-      <div>
-        <h1 className="text-3xl font-bold text-white">
+      <div className="min-w-0">
+        <h1 className="text-2xl sm:text-3xl font-bold text-white truncate">
           Supply
         </h1>
 
-        <p className="text-slate-400 mt-2">
+        <p className="text-slate-400 mt-1 sm:mt-2 text-sm sm:text-base">
           Monitor stock levels and receive new inventory.
         </p>
       </div>
@@ -324,95 +324,95 @@ function Suppliers() {
       {/* Statistics */}
       {/* ====================================== */}
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3 sm:gap-4">
 
         {/* Total Products */}
 
-        <div className="bg-slate-900 border border-slate-800 rounded-2xl p-5">
+        <div className="bg-slate-900 border border-slate-800 rounded-2xl p-4 sm:p-5 min-w-0">
           <div className="flex items-center justify-between">
-            <div>
-              <p className="text-slate-400 text-sm">
+            <div className="min-w-0">
+              <p className="text-slate-400 text-xs sm:text-sm">
                 Products
               </p>
 
-              <h2 className="text-2xl font-bold mt-1">
+              <h2 className="text-xl sm:text-2xl font-bold mt-1 truncate">
                 {stats.totalProducts}
               </h2>
             </div>
 
-            <FaBoxes className="text-cyan-400 text-2xl" />
+            <FaBoxes className="text-cyan-400 text-xl sm:text-2xl flex-shrink-0 ml-2" />
           </div>
         </div>
 
         {/* Out of Stock */}
 
-        <div className="bg-slate-900 border border-slate-800 rounded-2xl p-5">
+        <div className="bg-slate-900 border border-slate-800 rounded-2xl p-4 sm:p-5 min-w-0">
           <div className="flex items-center justify-between">
-            <div>
-              <p className="text-slate-400 text-sm">
+            <div className="min-w-0">
+              <p className="text-slate-400 text-xs sm:text-sm">
                 Out of Stock
               </p>
 
-              <h2 className="text-2xl font-bold mt-1 text-red-400">
+              <h2 className="text-xl sm:text-2xl font-bold mt-1 text-red-400 truncate">
                 {stats.outOfStock}
               </h2>
             </div>
 
-            <FaExclamationTriangle className="text-red-400 text-2xl" />
+            <FaExclamationTriangle className="text-red-400 text-xl sm:text-2xl flex-shrink-0 ml-2" />
           </div>
         </div>
 
         {/* Low Stock */}
 
-        <div className="bg-slate-900 border border-slate-800 rounded-2xl p-5">
+        <div className="bg-slate-900 border border-slate-800 rounded-2xl p-4 sm:p-5 min-w-0">
           <div className="flex items-center justify-between">
-            <div>
-              <p className="text-slate-400 text-sm">
+            <div className="min-w-0">
+              <p className="text-slate-400 text-xs sm:text-sm">
                 Low Stock
               </p>
 
-              <h2 className="text-2xl font-bold mt-1 text-yellow-400">
+              <h2 className="text-xl sm:text-2xl font-bold mt-1 text-yellow-400 truncate">
                 {stats.lowStock}
               </h2>
             </div>
 
-            <FaWarehouse className="text-yellow-400 text-2xl" />
+            <FaWarehouse className="text-yellow-400 text-xl sm:text-2xl flex-shrink-0 ml-2" />
           </div>
         </div>
 
         {/* Opening Stock */}
 
-        <div className="bg-slate-900 border border-slate-800 rounded-2xl p-5">
+        <div className="bg-slate-900 border border-slate-800 rounded-2xl p-4 sm:p-5 min-w-0">
           <div className="flex items-center justify-between">
-            <div>
-              <p className="text-slate-400 text-sm">
+            <div className="min-w-0">
+              <p className="text-slate-400 text-xs sm:text-sm">
                 Opening Stock
               </p>
 
-              <h2 className="text-2xl font-bold mt-1 text-orange-400">
+              <h2 className="text-xl sm:text-2xl font-bold mt-1 text-orange-400 truncate">
                 {stats.openingStock}
               </h2>
             </div>
 
-            <FaClock className="text-orange-400 text-2xl" />
+            <FaClock className="text-orange-400 text-xl sm:text-2xl flex-shrink-0 ml-2" />
           </div>
         </div>
 
         {/* Verified */}
 
-        <div className="bg-slate-900 border border-slate-800 rounded-2xl p-5">
+        <div className="bg-slate-900 border border-slate-800 rounded-2xl p-4 sm:p-5 min-w-0 sm:col-span-2 lg:col-span-1">
           <div className="flex items-center justify-between">
-            <div>
-              <p className="text-slate-400 text-sm">
+            <div className="min-w-0">
+              <p className="text-slate-400 text-xs sm:text-sm">
                 Verified
               </p>
 
-              <h2 className="text-2xl font-bold mt-1 text-green-400">
+              <h2 className="text-xl sm:text-2xl font-bold mt-1 text-green-400 truncate">
                 {stats.verified}
               </h2>
             </div>
 
-            <FaCheckCircle className="text-green-400 text-2xl" />
+            <FaCheckCircle className="text-green-400 text-xl sm:text-2xl flex-shrink-0 ml-2" />
           </div>
         </div>
 
@@ -422,13 +422,13 @@ function Suppliers() {
       {/* Search + Filters */}
       {/* ====================================== */}
 
-      <div className="bg-slate-900 border border-slate-800 rounded-2xl p-5">
+      <div className="bg-slate-900 border border-slate-800 rounded-2xl p-4 sm:p-5 min-w-0">
 
-        <div className="flex flex-col lg:flex-row gap-4">
+        <div className="flex flex-col gap-3 sm:gap-4">
 
-          <div className="relative flex-1">
+          <div className="relative flex-1 min-w-0">
 
-            <FaSearch className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500" />
+            <FaSearch className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 pointer-events-none text-sm sm:text-base" />
 
             <input
               type="text"
@@ -437,12 +437,12 @@ function Suppliers() {
                 setSearch(event.target.value)
               }
               placeholder="Search products..."
-              className="w-full bg-slate-800 border border-slate-700 rounded-xl py-3 pl-11 pr-4 text-white outline-none focus:border-cyan-500"
+              className="w-full bg-slate-800 border border-slate-700 rounded-xl py-2.5 sm:py-3 pl-10 sm:pl-11 pr-4 text-white outline-none focus:border-cyan-500 text-sm sm:text-base min-w-0"
             />
 
           </div>
 
-          <div className="flex flex-wrap gap-2">
+          <div className="flex flex-wrap gap-1.5 sm:gap-2">
 
             {[
               "All",
@@ -456,7 +456,7 @@ function Suppliers() {
                 onClick={() =>
                   setFilter(option)
                 }
-                className={`px-4 py-2 rounded-xl text-sm transition ${
+                className={`px-3 sm:px-4 py-1.5 sm:py-2 rounded-xl text-xs sm:text-sm transition touch-manipulation ${
                   filter === option
                     ? "bg-cyan-500 text-black font-semibold"
                     : "bg-slate-800 text-slate-300 hover:bg-slate-700"
@@ -476,18 +476,18 @@ function Suppliers() {
       {/* Products */}
       {/* ====================================== */}
 
-      <div className="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden">
+      <div className="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden min-w-0">
 
-        <div className="p-6 border-b border-slate-800">
+        <div className="p-4 sm:p-6 border-b border-slate-800">
 
-          <div className="flex items-center justify-between">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
 
-            <div>
-              <h2 className="text-xl font-bold">
+            <div className="min-w-0">
+              <h2 className="text-lg sm:text-xl font-bold">
                 Supply Inventory
               </h2>
 
-              <p className="text-slate-400 text-sm mt-1">
+              <p className="text-slate-400 text-xs sm:text-sm mt-1">
                 {filteredProducts.length} product(s)
                 shown
               </p>
@@ -499,15 +499,15 @@ function Suppliers() {
 
         {filteredProducts.length === 0 ? (
 
-          <div className="p-12 text-center">
+          <div className="p-8 sm:p-12 text-center">
 
-            <FaBoxOpen className="mx-auto text-5xl text-slate-600 mb-4" />
+            <FaBoxOpen className="mx-auto text-4xl sm:text-5xl text-slate-600 mb-3 sm:mb-4" />
 
-            <h3 className="text-lg font-semibold text-slate-300">
+            <h3 className="text-base sm:text-lg font-semibold text-slate-300">
               No products found
             </h3>
 
-            <p className="text-slate-500 mt-2">
+            <p className="text-slate-500 mt-1 sm:mt-2 text-sm sm:text-base">
               Try changing your search or filter.
             </p>
 
@@ -515,129 +515,184 @@ function Suppliers() {
 
         ) : (
 
-          <div className="overflow-x-auto">
+          <>
+            {/* Desktop/Tablet Table View */}
+            <div className="hidden md:block overflow-x-auto">
+              <table className="w-full min-w-[700px]">
 
-            <table className="w-full">
+                <thead>
+                  <tr className="text-left text-slate-400 text-xs sm:text-sm border-b border-slate-800">
 
-              <thead>
-                <tr className="text-left text-slate-400 text-sm border-b border-slate-800">
+                    <th className="p-3 sm:p-4 whitespace-nowrap">
+                      Product
+                    </th>
 
-                  <th className="p-4">
-                    Product
-                  </th>
+                    <th className="p-3 sm:p-4 whitespace-nowrap">
+                      Category
+                    </th>
 
-                  <th className="p-4">
-                    Category
-                  </th>
+                    <th className="p-3 sm:p-4 whitespace-nowrap">
+                      Stock
+                    </th>
 
-                  <th className="p-4">
-                    Stock
-                  </th>
+                    <th className="p-3 sm:p-4 whitespace-nowrap">
+                      Status
+                    </th>
 
-                  <th className="p-4">
-                    Status
-                  </th>
+                    <th className="p-3 sm:p-4 text-right whitespace-nowrap">
+                      Action
+                    </th>
 
-                  <th className="p-4 text-right">
-                    Action
-                  </th>
+                  </tr>
+                </thead>
 
-                </tr>
-              </thead>
+                <tbody>
 
-              <tbody>
+                  {filteredProducts.map(
+                    (product) => {
 
-                {filteredProducts.map(
-                  (product) => {
+                      const stock =
+                        Number(
+                          product.stock ?? 0
+                        );
 
-                    const stock =
-                      Number(
-                        product.stock ?? 0
+                      const status =
+                        getStatus(product);
+
+                      const StatusIcon =
+                        status.icon;
+
+                      return (
+                        <tr
+                          key={product.id}
+                          className="border-b border-slate-800 last:border-0 hover:bg-slate-800/50 transition"
+                        >
+
+                          <td className="p-3 sm:p-4">
+
+                            <div className="font-semibold text-white text-sm sm:text-base truncate max-w-[150px] sm:max-w-[200px]">
+                              {product.name}
+                            </div>
+
+                          </td>
+
+                          <td className="p-3 sm:p-4 text-slate-400 text-sm sm:text-base">
+                            {product.category ||
+                              "Uncategorized"}
+                          </td>
+
+                          <td className="p-3 sm:p-4">
+
+                            <span
+                              className={`font-bold text-sm sm:text-base ${
+                                stock === 0
+                                  ? "text-red-400"
+                                  : stock <= 10
+                                  ? "text-yellow-400"
+                                  : "text-white"
+                              }`}
+                            >
+                              {stock}
+                            </span>
+
+                            <span className="text-slate-500 ml-1 text-xs sm:text-sm">
+                              units
+                            </span>
+
+                          </td>
+
+                          <td className="p-3 sm:p-4">
+
+                            <span
+                              className={`inline-flex items-center gap-1.5 sm:gap-2 px-2 sm:px-3 py-1 rounded-full text-xs font-semibold whitespace-nowrap ${status.className}`}
+                            >
+                              <StatusIcon className="text-xs sm:text-sm" />
+                              {status.label}
+                            </span>
+
+                          </td>
+
+                          <td className="p-3 sm:p-4 text-right">
+
+                            <button
+                              onClick={() =>
+                                openReceiveModal(
+                                  product
+                                )
+                              }
+                              className="inline-flex items-center gap-1 sm:gap-2 px-3 sm:px-4 py-1.5 sm:py-2 rounded-xl bg-cyan-500 text-black font-semibold hover:bg-cyan-400 transition text-sm sm:text-base touch-manipulation"
+                            >
+                              <FaPlus className="text-xs sm:text-sm" />
+
+                              <span className="hidden sm:inline">Receive Stock</span>
+                              <span className="sm:hidden">Receive</span>
+                            </button>
+
+                          </td>
+
+                        </tr>
                       );
+                    }
+                  )}
 
-                    const status =
-                      getStatus(product);
+                </tbody>
 
-                    const StatusIcon =
-                      status.icon;
+              </table>
+            </div>
 
-                    return (
-                      <tr
-                        key={product.id}
-                        className="border-b border-slate-800 last:border-0 hover:bg-slate-800/50 transition"
-                      >
+            {/* Mobile Card View */}
+            <div className="md:hidden">
+              {filteredProducts.map((product) => {
+                const stock = Number(product.stock ?? 0);
+                const status = getStatus(product);
+                const StatusIcon = status.icon;
 
-                        <td className="p-4">
-
-                          <div className="font-semibold text-white">
-                            {product.name}
-                          </div>
-
-                        </td>
-
-                        <td className="p-4 text-slate-400">
-                          {product.category ||
-                            "Uncategorized"}
-                        </td>
-
-                        <td className="p-4">
-
-                          <span
-                            className={`font-bold ${
+                return (
+                  <div
+                    key={product.id}
+                    className="border-b border-slate-800 last:border-0 p-4 hover:bg-slate-800/30 transition"
+                  >
+                    <div className="flex items-start justify-between gap-3">
+                      <div className="min-w-0 flex-1">
+                        <h3 className="font-semibold text-white text-sm truncate">
+                          {product.name}
+                        </h3>
+                        <p className="text-xs text-slate-400 mt-1 truncate">
+                          {product.category || "Uncategorized"}
+                        </p>
+                        <div className="flex items-center gap-3 mt-2 flex-wrap">
+                          <span className="text-xs text-slate-400">
+                            Stock: <span className={`font-bold ${
                               stock === 0
                                 ? "text-red-400"
                                 : stock <= 10
                                 ? "text-yellow-400"
                                 : "text-white"
-                            }`}
-                          >
-                            {stock}
+                            }`}>
+                              {stock}
+                            </span>
                           </span>
-
-                          <span className="text-slate-500 ml-1">
-                            units
-                          </span>
-
-                        </td>
-
-                        <td className="p-4">
-
                           <span
-                            className={`inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold ${status.className}`}
+                            className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-semibold ${status.className}`}
                           >
-                            <StatusIcon />
+                            <StatusIcon className="text-[10px]" />
                             {status.label}
                           </span>
-
-                        </td>
-
-                        <td className="p-4 text-right">
-
-                          <button
-                            onClick={() =>
-                              openReceiveModal(
-                                product
-                              )
-                            }
-                            className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-cyan-500 text-black font-semibold hover:bg-cyan-400 transition"
-                          >
-                            <FaPlus />
-
-                            Receive Stock
-                          </button>
-
-                        </td>
-
-                      </tr>
-                    );
-                  }
-                )}
-
-              </tbody>
-
-            </table>
-
-          </div>
+                        </div>
+                      </div>
+                      <button
+                        onClick={() => openReceiveModal(product)}
+                        className="flex-shrink-0 inline-flex items-center gap-1 px-3 py-2 rounded-xl bg-cyan-500 text-black font-semibold hover:bg-cyan-400 transition text-sm touch-manipulation"
+                      >
+                        <FaPlus className="text-xs" />
+                        <span>Receive</span>
+                      </button>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </>
 
         )}
 
@@ -649,7 +704,14 @@ function Suppliers() {
 
       {receiveProduct && (
 
-        <div className="fixed inset-0 z-50 bg-black/70 flex items-center justify-center p-4">
+        <div 
+          className="fixed inset-0 z-50 bg-black/70 flex items-center justify-center p-3 sm:p-4"
+          onClick={(e) => {
+            if (e.target === e.currentTarget && !receiving) {
+              closeReceiveModal();
+            }
+          }}
+        >
 
           <motion.div
             initial={{
@@ -660,17 +722,17 @@ function Suppliers() {
               opacity: 1,
               scale: 1,
             }}
-            className="w-full max-w-md bg-slate-900 border border-slate-800 rounded-2xl p-6"
+            className="w-full max-w-md bg-slate-900 border border-slate-800 rounded-2xl p-5 sm:p-6 max-h-[90vh] overflow-y-auto"
           >
 
-            <div className="flex items-center justify-between mb-6">
+            <div className="flex items-start justify-between gap-3 mb-4 sm:mb-6">
 
-              <div>
-                <h2 className="text-2xl font-bold">
+              <div className="min-w-0">
+                <h2 className="text-xl sm:text-2xl font-bold truncate">
                   Receive Stock
                 </h2>
 
-                <p className="text-slate-400 mt-1">
+                <p className="text-slate-400 mt-1 text-sm sm:text-base truncate">
                   {receiveProduct.name}
                 </p>
               </div>
@@ -678,22 +740,22 @@ function Suppliers() {
               <button
                 onClick={closeReceiveModal}
                 disabled={receiving}
-                className="p-2 rounded-lg text-slate-400 hover:bg-slate-800 hover:text-white"
+                className="p-2 rounded-lg text-slate-400 hover:bg-slate-800 hover:text-white touch-manipulation flex-shrink-0"
               >
-                <FaTimes />
+                <FaTimes className="text-base sm:text-lg" />
               </button>
 
             </div>
 
-            <div className="space-y-5">
+            <div className="space-y-4 sm:space-y-5">
 
-              <div className="bg-slate-800 rounded-xl p-4">
+              <div className="bg-slate-800 rounded-xl p-3 sm:p-4">
 
-                <p className="text-slate-400 text-sm">
+                <p className="text-slate-400 text-xs sm:text-sm">
                   Current Stock
                 </p>
 
-                <p className="text-2xl font-bold mt-1">
+                <p className="text-xl sm:text-2xl font-bold mt-1">
                   {Number(
                     receiveProduct.stock ?? 0
                   )}{" "}
@@ -704,7 +766,7 @@ function Suppliers() {
 
               <div>
 
-                <label className="block text-sm text-slate-400 mb-2">
+                <label className="block text-xs sm:text-sm text-slate-400 mb-1.5 sm:mb-2">
                   Quantity Received
                 </label>
 
@@ -718,19 +780,19 @@ function Suppliers() {
                     )
                   }
                   placeholder="Enter quantity"
-                  className="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-3 text-white outline-none focus:border-cyan-500"
+                  className="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 sm:px-4 py-2.5 sm:py-3 text-white outline-none focus:border-cyan-500 text-sm sm:text-base min-w-0"
                   autoFocus
                 />
 
               </div>
 
-              <div className="bg-cyan-500/10 border border-cyan-500/20 rounded-xl p-4">
+              <div className="bg-cyan-500/10 border border-cyan-500/20 rounded-xl p-3 sm:p-4">
 
-                <p className="text-sm text-slate-400">
+                <p className="text-xs sm:text-sm text-slate-400">
                   New Stock
                 </p>
 
-                <p className="text-2xl font-bold text-cyan-400 mt-1">
+                <p className="text-xl sm:text-2xl font-bold text-cyan-400 mt-1">
 
                   {Number(
                     receiveProduct.stock ?? 0
@@ -745,12 +807,12 @@ function Suppliers() {
 
               </div>
 
-              <div className="flex justify-end gap-3">
+              <div className="flex flex-col-reverse sm:flex-row justify-end gap-2 sm:gap-3">
 
                 <button
                   onClick={closeReceiveModal}
                   disabled={receiving}
-                  className="px-5 py-2.5 rounded-xl bg-slate-700 hover:bg-slate-600 transition"
+                  className="px-4 sm:px-5 py-2 sm:py-2.5 rounded-xl bg-slate-700 hover:bg-slate-600 transition text-sm sm:text-base touch-manipulation w-full sm:w-auto"
                 >
                   Cancel
                 </button>
@@ -763,7 +825,7 @@ function Suppliers() {
                       receiveQuantity
                     ) <= 0
                   }
-                  className="px-5 py-2.5 rounded-xl bg-cyan-500 text-black font-bold hover:bg-cyan-400 disabled:opacity-50 disabled:cursor-not-allowed transition"
+                  className="px-4 sm:px-5 py-2 sm:py-2.5 rounded-xl bg-cyan-500 text-black font-bold hover:bg-cyan-400 disabled:opacity-50 disabled:cursor-not-allowed transition text-sm sm:text-base touch-manipulation w-full sm:w-auto"
                 >
                   {receiving
                     ? "Receiving..."
